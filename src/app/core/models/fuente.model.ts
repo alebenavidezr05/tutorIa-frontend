@@ -6,6 +6,7 @@ export type CategoriaFuente =
   | 'INSTITUCIONAL_OFICIAL'
   | 'EDUCATIVA_ABIERTA'
   | 'REFERENCIA'
+  | 'PRENSA_CONFIABLE'
   | 'CURADA'
   | 'WEB_GENERAL';
 

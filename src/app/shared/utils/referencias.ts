@@ -16,9 +16,19 @@ export const ROTULO_CATEGORIA_FUENTE: Record<CategoriaFuente, string> = {
   INSTITUCIONAL_OFICIAL: 'Fuente oficial',
   EDUCATIVA_ABIERTA: 'Material educativo',
   REFERENCIA: 'Obra de referencia',
+  PRENSA_CONFIABLE: 'Nota de prensa',
   CURADA: 'Recurso revisado por TutorIA',
   WEB_GENERAL: 'Sitio web',
 };
+
+/** Rótulo genérico para categorías que el frontend aún no conoce. */
+export const ROTULO_FUENTE_GENERICO = 'Fuente';
+
+export function rotuloCategoriaFuente(categoria: string | null | undefined): string {
+  return categoria && Object.hasOwn(ROTULO_CATEGORIA_FUENTE, categoria)
+    ? ROTULO_CATEGORIA_FUENTE[categoria as CategoriaFuente]
+    : ROTULO_FUENTE_GENERICO;
+}
 
 export function urlExternaSegura(url: string | null | undefined): string | null {
   return url && /^https?:\/\//i.test(url) ? url : null;
@@ -44,7 +54,7 @@ export function fuenteAReferencia(fuente: FuentePublica): ReferenciaVista {
     id: fuente.id_fuente,
     texto: fuente.titulo,
     url: urlExternaSegura(fuente.url),
-    rotulo: ROTULO_CATEGORIA_FUENTE[fuente.categoria] ?? null,
+    rotulo: rotuloCategoriaFuente(fuente.categoria),
     doi: _urlDoi(fuente.doi),
     detalle: detalle || null,
   };

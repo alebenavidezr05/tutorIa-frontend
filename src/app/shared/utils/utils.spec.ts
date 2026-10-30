@@ -5,7 +5,7 @@ import { ApiError } from '../../core/models';
 import { aplicarErroresServidor, snakeACamel } from './aplicar-errores-servidor';
 import { avisoDeError, MENSAJE_LIMITE_USO } from './aviso-error';
 import { conIndicador } from './con-indicador';
-import { referenciasComoTexto, fuenteAReferencia } from './referencias';
+import { referenciasComoTexto, fuenteAReferencia, rotuloCategoriaFuente } from './referencias';
 import { resolverUrlApi } from './resolver-url-api';
 import { rutaInternaSegura } from './ruta-segura';
 import { dividirEnSecciones } from './secciones-texto';
@@ -138,6 +138,21 @@ describe('referencias', () => {
     expect(vista.rotulo).toBe('Material educativo');
     expect(vista.url).toBeNull();
     expect(vista.doi).toBe('https://doi.org/10.1000/xyz123');
+  });
+
+  it('rotula PRENSA_CONFIABLE como «Nota de prensa»', () => {
+    expect(rotuloCategoriaFuente('PRENSA_CONFIABLE')).toBe('Nota de prensa');
+    expect(fuenteAReferencia(fuentePrueba({ categoria: 'PRENSA_CONFIABLE' })).rotulo).toBe(
+      'Nota de prensa',
+    );
+  });
+
+  it('usa el rótulo genérico «Fuente» para categorías desconocidas', () => {
+    expect(rotuloCategoriaFuente('CATEGORIA_FUTURA')).toBe('Fuente');
+    expect(rotuloCategoriaFuente('toString')).toBe('Fuente');
+    expect(rotuloCategoriaFuente(null)).toBe('Fuente');
+    const fuente = fuentePrueba({ categoria: 'CATEGORIA_FUTURA' as never });
+    expect(fuenteAReferencia(fuente).rotulo).toBe('Fuente');
   });
 
   it('referenciasComoTexto une las referencias APA', () => {
