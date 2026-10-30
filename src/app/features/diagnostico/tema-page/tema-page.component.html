@@ -1,0 +1,53 @@
+<section class="tema">
+  <p class="tema__lema">{{ textos.lema }}</p>
+  <h1>{{ textos.titulo }}</h1>
+
+  <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+    <app-campo-formulario
+      [etiqueta]="textos.etiqueta"
+      idCampo="tema-texto"
+      [ayuda]="textos.ayuda"
+      [control]="form.controls.tema"
+    >
+      <textarea
+        appControlCampo
+        class="control tema__campo"
+        rows="3"
+        autocomplete="off"
+        enterkeyhint="go"
+        [maxlength]="maximo"
+        formControlName="tema"
+      ></textarea>
+    </app-campo-formulario>
+
+    <div class="tema__ejemplos">
+      <p id="tema-ejemplos" class="tema__ejemplos-titulo">{{ textos.ejemplosTitulo }}</p>
+      <ul class="lista-limpia tema__chips" aria-labelledby="tema-ejemplos">
+        @for (ejemplo of textos.ejemplos; track ejemplo) {
+          <li>
+            <button type="button" class="tema__chip" (click)="usarEjemplo(ejemplo)">
+              {{ ejemplo }}
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+
+    @if (aviso(); as a) {
+      <app-aviso-error [aviso]="a" (reintentar)="enviar()" />
+    }
+
+    <button
+      app-boton
+      type="submit"
+      variante="acento"
+      [bloque]="true"
+      [cargando]="cargando()"
+      [disabled]="cargando()"
+    >
+      {{ cargando() ? textos.creando : textos.boton }}
+    </button>
+  </form>
+
+  <p class="tema__lema-secundario">{{ textos.lemaSecundario }}</p>
+</section>

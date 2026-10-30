@@ -1,0 +1,136 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  @for (parrafo of textos.intro; track parrafo) {
+    <p>{{ parrafo }}</p>
+  }
+</header>
+
+@if (cargando() && !perfil()) {
+  <app-spinner etiqueta="Cargando tu perfil de aprendizaje…" />
+} @else if (error()) {
+  <app-estado-vacio [titulo]="textos.error">
+    <button app-boton type="button" variante="primario" (click)="cargar()">
+      {{ textos.reintentar }}
+    </button>
+  </app-estado-vacio>
+} @else if (perfil(); as p) {
+  <app-tarjeta class="bloque">
+    <app-interruptor
+      [activo]="p.personalizacion_activa"
+      [etiqueta]="textos.interruptor"
+      [descripcion]="textos.interruptorDescripcion"
+      [deshabilitado]="guardando()"
+      (cambiar)="alCambiarPersonalizacion($event)"
+    />
+  </app-tarjeta>
+
+  @if (!p.personalizacion_activa) {
+    <div class="alerta alerta--aviso" role="status">
+      <app-icono class="alerta__icono" nombre="info" />
+      <p class="alerta__cuerpo">{{ textos.desactivada }}</p>
+    </div>
+  } @else {
+    <div class="aprendizaje">
+      <app-tarjeta>
+        <h2>{{ textos.resumen }}</h2>
+        <p>{{ p.resumen || textos.sinResumen }}</p>
+        <p class="texto-suave">{{ textoInteracciones() }}</p>
+        <dl class="aprendizaje__datos">
+          <div>
+            <dt>{{ textos.detalle }}</dt>
+            <dd>{{ detalle() }}</dd>
+          </div>
+          <div>
+            <dt>{{ textos.ritmo }}</dt>
+            <dd>{{ ritmo() }}</dd>
+          </div>
+        </dl>
+      </app-tarjeta>
+
+      @if (formatos().length > 0) {
+        <app-tarjeta>
+          <h2>{{ textos.formatos }}</h2>
+          <ul class="lista-limpia aprendizaje__formatos">
+            @for (f of formatos(); track f.clave) {
+              <li>
+                <app-barra-progreso
+                  [valor]="f.porcentaje"
+                  [etiqueta]="f.etiqueta"
+                  [idBase]="'formato-' + f.clave"
+                />
+              </li>
+            }
+          </ul>
+        </app-tarjeta>
+      }
+    </div>
+
+    @if (p.temas.length > 0) {
+      <section aria-labelledby="aprendizaje-temas">
+        <h2 id="aprendizaje-temas">{{ textos.temas }}</h2>
+        <ul class="lista-limpia rejilla">
+          @for (tema of p.temas; track tema.tema) {
+            <li>
+              <app-tarjeta>
+                <h3 class="aprendizaje__tema">{{ tema.tema }}</h3>
+                <p class="aprendizaje__rotulo">{{ textos.dificultades }}</p>
+                @if (tema.dificultades.length > 0) {
+                  <ul>
+                    @for (d of tema.dificultades; track d) {
+                      <li>{{ d }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <p class="texto-suave">{{ textos.ninguna }}</p>
+                }
+                <p class="aprendizaje__rotulo">{{ textos.fortalezas }}</p>
+                @if (tema.fortalezas.length > 0) {
+                  <ul>
+                    @for (f of tema.fortalezas; track f) {
+                      <li>{{ f }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <p class="texto-suave">{{ textos.ninguna }}</p>
+                }
+              </app-tarjeta>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+
+  <section class="aprendizaje__control" aria-label="Controlar mis datos de aprendizaje">
+    <button app-boton type="button" variante="peligro" (click)="abrirOlvidar()">
+      {{ textos.olvidar }}
+    </button>
+    <p>
+      {{ textos.conversaciones }}
+      <a class="enlace-boton" routerLink="/tutor">{{ textos.irTutor }}</a>
+    </p>
+  </section>
+}
+
+<app-dialogo-confirmacion
+  [abierto]="dialogo() === 'desactivar'"
+  [titulo]="textos.desactivarTitulo"
+  [textoConfirmar]="textos.desactivarConfirmar"
+  [cargando]="guardando()"
+  (confirmar)="confirmarDesactivar()"
+  (cancelar)="cerrarDialogo()"
+>
+  <p>{{ textos.desactivarTexto }}</p>
+</app-dialogo-confirmacion>
+
+<app-dialogo-confirmacion
+  [abierto]="dialogo() === 'olvidar'"
+  [titulo]="textos.olvidarTitulo"
+  [textoConfirmar]="textos.olvidarConfirmar"
+  variante="peligro"
+  [cargando]="guardando()"
+  (confirmar)="olvidar()"
+  (cancelar)="cerrarDialogo()"
+>
+  <p>{{ textos.olvidarTexto }}</p>
+</app-dialogo-confirmacion>

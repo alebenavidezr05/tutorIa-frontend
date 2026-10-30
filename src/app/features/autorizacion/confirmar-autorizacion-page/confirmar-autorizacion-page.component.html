@@ -1,0 +1,137 @@
+<h1>{{ textos.titulo }}</h1>
+
+@switch (vista().tipo) {
+  @case ('cargando') {
+    <app-spinner [etiqueta]="textos.cargando" />
+  }
+  @case ('sin-token') {
+    <div class="alerta alerta--error" role="alert">
+      <app-icono class="alerta__icono" nombre="alerta" />
+      <p class="alerta__cuerpo">{{ textos.sinToken }}</p>
+    </div>
+    <a app-boton variante="secundario" routerLink="/autorizacion">{{ textos.pedirNuevo }}</a>
+  }
+  @case ('invalida') {
+    <div class="alerta alerta--error" role="alert">
+      <app-icono class="alerta__icono" nombre="alerta" />
+      <p class="alerta__cuerpo">{{ textos.invalido }}</p>
+    </div>
+    <a app-boton variante="primario" routerLink="/autorizacion">{{ textos.pedirNuevo }}</a>
+  }
+  @case ('error') {
+    <div class="alerta alerta--error" role="alert">
+      <app-icono class="alerta__icono" nombre="alerta" />
+      <p class="alerta__cuerpo">{{ textos.errorGeneral }}</p>
+    </div>
+    <button app-boton type="button" variante="primario" (click)="consultar()">
+      {{ textos.reintentar }}
+    </button>
+  }
+}
+
+@if (autorizacion(); as a) {
+  <app-tarjeta>
+    <p class="texto-suave">{{ textos.estudiante }}</p>
+    <p class="estudiante">{{ a.correo_estudiante_enmascarado }}</p>
+
+    @switch (a.estado) {
+      @case ('PENDIENTE_VERIFICACION') {
+        <h2>{{ textos.queAutorizas }}</h2>
+        <ul class="explicacion">
+          @for (linea of textos.explicacion; track linea) {
+            <li>{{ linea }}</li>
+          }
+        </ul>
+        <p>
+          <strong>{{ a.permite_compras ? textos.comprasSi : textos.comprasNo }}</strong>
+        </p>
+        <p class="texto-suave">
+          {{ textos.vence }} {{ a.fecha_expiracion_token | date: 'longDate' }}.
+        </p>
+        <div class="acciones">
+          <button
+            app-boton
+            type="button"
+            variante="acento"
+            [cargando]="procesando()"
+            [disabled]="procesando()"
+            (click)="autorizar()"
+          >
+            {{ textos.autorizar }}
+          </button>
+          <button
+            app-boton
+            type="button"
+            variante="secundario"
+            [disabled]="procesando()"
+            (click)="abrirDialogo('no-autorizo')"
+          >
+            {{ textos.noAutorizo }}
+          </button>
+        </div>
+      }
+      @case ('AUTORIZADA') {
+        <div class="alerta alerta--exito" role="status">
+          <app-icono class="alerta__icono" nombre="check" />
+          <p class="alerta__cuerpo">{{ textos.autorizada }}</p>
+        </div>
+        <p>
+          <strong>{{ a.permite_compras ? textos.comprasSi : textos.comprasNo }}</strong>
+        </p>
+        <button app-boton type="button" variante="peligro" (click)="abrirDialogo('revocar')">
+          {{ textos.revocar }}
+        </button>
+      }
+      @case ('REVOCADA') {
+        <div class="alerta alerta--aviso" role="status">
+          <app-icono class="alerta__icono" nombre="info" />
+          <p class="alerta__cuerpo">{{ textos.revocada }}</p>
+        </div>
+        <a app-boton variante="secundario" routerLink="/autorizacion">{{ textos.pedirNuevo }}</a>
+      }
+      @case ('VENCIDA') {
+        <div class="alerta alerta--aviso" role="status">
+          <app-icono class="alerta__icono" nombre="info" />
+          <p class="alerta__cuerpo">{{ textos.vencida }}</p>
+        </div>
+        <a app-boton variante="primario" routerLink="/autorizacion">{{ textos.pedirNuevo }}</a>
+      }
+    }
+  </app-tarjeta>
+}
+
+<app-dialogo-confirmacion
+  [abierto]="dialogo() === 'no-autorizo'"
+  [titulo]="textos.noAutorizoTitulo"
+  [textoConfirmar]="textos.noAutorizoConfirmar"
+  variante="peligro"
+  [cargando]="procesando()"
+  (confirmar)="revocar()"
+  (cancelar)="cerrarDialogo()"
+>
+  <p>{{ textos.noAutorizoTexto }}</p>
+</app-dialogo-confirmacion>
+
+<app-dialogo-confirmacion
+  [abierto]="dialogo() === 'revocar'"
+  [titulo]="textos.revocarTitulo"
+  [textoConfirmar]="textos.revocar"
+  variante="peligro"
+  [cargando]="procesando()"
+  (confirmar)="revocar()"
+  (cancelar)="cerrarDialogo()"
+>
+  <p>{{ textos.revocarTexto }}</p>
+  <div class="casilla-dialogo">
+    <input
+      id="revocar-eliminar-datos"
+      type="checkbox"
+      class="casilla-nativa"
+      aria-describedby="revocar-eliminar-ayuda"
+      [checked]="eliminarDatos()"
+      (change)="alternarEliminarDatos($event)"
+    />
+    <label for="revocar-eliminar-datos">{{ textos.eliminarDatos }}</label>
+  </div>
+  <p id="revocar-eliminar-ayuda" class="texto-suave">{{ textos.eliminarDatosAyuda }}</p>
+</app-dialogo-confirmacion>

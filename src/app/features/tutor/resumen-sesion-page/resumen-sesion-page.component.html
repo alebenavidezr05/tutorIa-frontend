@@ -1,0 +1,37 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+</header>
+
+@if (resumen(); as r) {
+  <app-tarjeta>
+    <h2>{{ textos.resumen }}</h2>
+    <p class="resumen__texto">{{ r.resumen }}</p>
+  </app-tarjeta>
+  <app-aviso-ia [texto]="r.aviso || avisoPorDefecto" />
+} @else if (!cargando()) {
+  <p class="texto-suave">{{ textos.sinResumen }}</p>
+}
+
+@if (cargando()) {
+  <app-spinner etiqueta="Cargando las referencias…" />
+} @else {
+  <app-tarjeta>
+    <app-lista-referencias
+      [referencias]="referenciasVista()"
+      [titulo]="textos.referencias"
+      formato="apa"
+      [textoVacio]="textos.sinReferencias"
+      idTitulo="resumen-referencias"
+    />
+    @if (referencias().length > 0) {
+      <button app-boton type="button" variante="secundario" (click)="copiar()">
+        <app-icono nombre="copiar" /> {{ textos.copiar }}
+      </button>
+    }
+  </app-tarjeta>
+}
+
+<div class="acciones">
+  <a app-boton variante="acento" routerLink="/tutor">{{ textos.nueva }}</a>
+  <a app-boton variante="secundario" routerLink="/tutor">{{ textos.volver }}</a>
+</div>

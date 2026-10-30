@@ -1,0 +1,78 @@
+<div
+  class="selector"
+  [class.selector--arrastrando]="arrastrando()"
+  [class.selector--compacto]="compacto()"
+  (dragover)="alArrastrar($event, true)"
+  (dragleave)="alArrastrar($event, false)"
+  (drop)="alSoltar($event)"
+>
+  @if (archivo(); as elegido) {
+    <div class="selector__elegido">
+      @if (vistaPrevia(); as url) {
+        <img
+          class="selector__vista"
+          [src]="url"
+          [alt]="'Vista previa: ' + elegido.name"
+          width="72"
+          height="72"
+        />
+      } @else {
+        <span class="selector__icono-archivo" aria-hidden="true">
+          <app-icono nombre="adjuntar" />
+        </span>
+      }
+      <p class="selector__nombre">
+        <span class="visualmente-oculto">Archivo elegido:</span>
+        {{ elegido.name }}
+        <span class="selector__tamano">{{ elegido.size | tamanoArchivo }}</span>
+      </p>
+      <button
+        type="button"
+        class="selector__quitar"
+        [disabled]="deshabilitado()"
+        (click)="alQuitar()"
+      >
+        <app-icono nombre="cerrar" [tamano]="18" />
+        <span>{{ textos.quitar }}</span>
+      </button>
+    </div>
+    @if (progreso() !== null) {
+      <app-barra-progreso
+        [valor]="progreso() ?? 0"
+        [etiqueta]="textos.subiendo + ': ' + (progreso() ?? 0) + ' %'"
+        [idBase]="idInput"
+      />
+    }
+  } @else {
+    <input
+      type="file"
+      class="visualmente-oculto selector__input"
+      [id]="idInput"
+      [accept]="accept"
+      [attr.capture]="usarCamara() ? 'environment' : null"
+      [disabled]="deshabilitado()"
+      [attr.aria-describedby]="describedBy()"
+      [attr.aria-invalid]="error() ? 'true' : null"
+      (change)="alCambiar($event)"
+    />
+    <label class="selector__boton" [for]="idInput">
+      <app-icono nombre="adjuntar" />
+      {{ etiqueta() }}
+    </label>
+    @if (!compacto()) {
+      <span class="selector__soltar" aria-hidden="true">{{ textos.soltar }}</span>
+    }
+  }
+  <p class="selector__ayuda" [id]="idAyuda">
+    {{ textos.formatos }}
+    @if (!compacto()) {
+      <br />{{ textos.aviso }}
+    }
+  </p>
+  @if (error(); as mensaje) {
+    <p class="mensaje-error" [id]="idError" role="alert">
+      <app-icono nombre="alerta" [tamano]="18" />
+      <span>{{ mensaje }}</span>
+    </p>
+  }
+</div>

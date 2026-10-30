@@ -1,0 +1,134 @@
+@use 'mixins' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente-cuerpo);
+  font-size: var(--texto-base);
+  line-height: var(--interlineado);
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 var(--espacio-3);
+  font-family: var(--fuente-titulares);
+  font-weight: 400;
+  line-height: var(--interlineado-titulo);
+  letter-spacing: 0.01em;
+}
+
+h1 {
+  font-size: var(--texto-2xl);
+}
+
+h2 {
+  font-size: var(--texto-xl);
+}
+
+h3 {
+  font-size: var(--texto-lg);
+}
+
+h4 {
+  font-size: var(--texto-md);
+}
+
+p,
+ul,
+ol,
+dl,
+figure {
+  margin: 0 0 var(--espacio-4);
+}
+
+img,
+svg,
+video,
+iframe {
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration-color: var(--color-acento);
+}
+
+:focus-visible {
+  @include foco-visible;
+}
+
+[tabindex='-1']:focus {
+  outline: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Campos ≥ 16 px: evita el zoom automático en iOS */
+input,
+select,
+textarea {
+  font-size: max(16px, var(--texto-base));
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+pre,
+code {
+  font-family: var(--fuente-mono);
+}
+
+::selection {
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+}
+
+@include sin-movimiento {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,67 @@
+@use 'mixins' as *;
+
+.cuestionario {
+  max-width: 720px;
+}
+
+.pregunta {
+  margin-block: var(--espacio-5);
+}
+
+.pregunta__enunciado {
+  font-family: var(--fuente-cuerpo);
+  font-weight: 700;
+  font-size: var(--texto-lg);
+  line-height: 1.35;
+  margin-bottom: var(--espacio-4);
+}
+
+.opciones {
+  display: grid;
+  gap: var(--espacio-2);
+}
+
+.opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-3) var(--espacio-2) var(--espacio-1);
+  border: 2px solid var(--color-borde-control);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie);
+  cursor: pointer;
+
+  &--elegida {
+    border-color: var(--color-primario);
+    box-shadow: inset 0 0 0 1px var(--color-primario);
+  }
+
+  &:has(input:focus-visible) {
+    @include foco-visible;
+  }
+}
+
+.opcion__letra {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-fondo-alterno);
+  font-weight: 800;
+}
+
+.opcion--elegida .opcion__letra {
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+}
+
+.navegacion {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-4);
+}

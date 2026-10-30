@@ -1,0 +1,99 @@
+@if (cargando()) {
+  <app-spinner [etiqueta]="textos.cargando" />
+} @else if (error()) {
+  <app-estado-vacio [titulo]="textos.error">
+    <button app-boton type="button" variante="primario" (click)="cargar()">
+      {{ textos.reintentar }}
+    </button>
+  </app-estado-vacio>
+} @else if (plan(); as p) {
+  <header class="encabezado-pagina plan__cabecera">
+    <app-insignia-nivel [nivel]="p.nivel_bloom" />
+    <h1>{{ p.titulo }}</h1>
+  </header>
+
+  @if (!p.validado) {
+    <div class="alerta alerta--aviso" role="note">
+      <app-icono class="alerta__icono" nombre="info" />
+      <p class="alerta__cuerpo">{{ textos.noValidado }}</p>
+    </div>
+  }
+
+  <div class="plan">
+    <div class="plan__principal">
+      <section aria-labelledby="plan-explicacion">
+        <h2 id="plan-explicacion">{{ textos.explicacion }}</h2>
+        <p class="plan__explicacion">{{ p.explicacion }}</p>
+      </section>
+
+      <section aria-labelledby="plan-actividades">
+        <h2 id="plan-actividades">{{ textos.actividades }}</h2>
+        <p class="texto-suave">{{ textos.actividadesAyuda }}</p>
+        @if (p.acepta_archivos) {
+          <p class="texto-suave">{{ textos.avanzadoAyuda }}</p>
+        }
+        <app-barra-progreso
+          [valor]="completadas()"
+          [max]="actividades().length"
+          [etiqueta]="textoProgreso()"
+          idBase="plan-progreso"
+        />
+        <ol class="lista-limpia plan__actividades">
+          @for (actividad of actividades(); track actividad.id_actividad) {
+            <li>
+              <app-actividad-item
+                [actividad]="actividad"
+                [aceptaArchivos]="p.acepta_archivos"
+                [sinCupoArchivos]="sinCupoArchivos()"
+                [estadoGuardado]="guardado()[actividad.id_actividad] ?? null"
+                [entrega]="entregas()[actividad.id_actividad] ?? null"
+                [urlArchivo]="urlsArchivo()[actividad.id_actividad] ?? null"
+                (cambiarEstado)="cambiarEstado(actividad, $event)"
+                (guardarRespuesta)="guardarRespuesta(actividad, $event)"
+                (adjuntar)="adjuntar(actividad, $event)"
+                (quitarArchivo)="quitarArchivo(actividad)"
+              />
+            </li>
+          }
+        </ol>
+      </section>
+    </div>
+
+    <aside class="plan__lateral">
+      <app-tarjeta>
+        <h2 class="plan__subtitulo">{{ textos.tecnicas }}</h2>
+        <ul class="plan__tecnicas">
+          @for (tecnica of p.tecnicas_estudio; track $index) {
+            <li>{{ tecnica }}</li>
+          }
+        </ul>
+      </app-tarjeta>
+
+      <app-tarjeta [destacada]="true">
+        @if (avisoTutor(); as a) {
+          <app-aviso-error [aviso]="a" (reintentar)="preguntarTutor()" />
+        }
+        <button
+          app-boton
+          type="button"
+          variante="acento"
+          [bloque]="true"
+          [cargando]="abriendoTutor()"
+          [disabled]="abriendoTutor()"
+          (click)="preguntarTutor()"
+        >
+          {{ abriendoTutor() ? textos.abriendoTutor : textos.preguntarTutor }}
+        </button>
+      </app-tarjeta>
+    </aside>
+  </div>
+
+  <section class="plan__fuentes">
+    <app-lista-referencias
+      [referencias]="fuentes()"
+      [titulo]="textos.fuentes"
+      [textoVacio]="textos.sinFuentes"
+      idTitulo="plan-fuentes"
+    />
+  </section>
+}

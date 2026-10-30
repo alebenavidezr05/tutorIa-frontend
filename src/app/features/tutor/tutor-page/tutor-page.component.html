@@ -1,0 +1,99 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  <p>{{ textos.intro }}</p>
+</header>
+
+<app-tarjeta class="nueva">
+  <h2 class="nueva__titulo">{{ textos.nuevaTitulo }}</h2>
+  <form [formGroup]="form" (ngSubmit)="crear()" novalidate>
+    <app-campo-formulario
+      [etiqueta]="textos.tema"
+      idCampo="tutor-tema"
+      [ayuda]="textos.ayudaTema"
+      [control]="form.controls.tema"
+    >
+      <input
+        appControlCampo
+        class="control"
+        type="text"
+        autocomplete="off"
+        [maxlength]="maximo"
+        formControlName="tema"
+      />
+    </app-campo-formulario>
+    @if (aviso(); as a) {
+      <app-aviso-error [aviso]="a" (reintentar)="crear()" />
+    }
+    <button app-boton type="submit" variante="acento" [cargando]="creando()" [disabled]="creando()">
+      {{ textos.nueva }}
+    </button>
+  </form>
+</app-tarjeta>
+
+<section aria-labelledby="tutor-lista">
+  <h2 id="tutor-lista">{{ textos.lista }}</h2>
+
+  @if (cargando() && conversaciones().length === 0) {
+    <app-spinner etiqueta="Cargando tus conversaciones…" />
+  } @else if (error()) {
+    <app-estado-vacio [titulo]="textos.error">
+      <button app-boton type="button" variante="primario" (click)="cargar(1)">
+        {{ textos.reintentar }}
+      </button>
+    </app-estado-vacio>
+  } @else if (conversaciones().length === 0) {
+    <app-estado-vacio [titulo]="textos.vacioTitulo" [texto]="textos.vacioTexto" />
+  } @else {
+    <ul class="lista-limpia rejilla">
+      @for (c of conversaciones(); track c.id_conversacion) {
+        <li>
+          <app-tarjeta class="conversacion">
+            <h3 class="conversacion__tema">
+              <a [routerLink]="['/tutor', c.id_conversacion]">{{ c.tema }}</a>
+            </h3>
+            <p class="conversacion__meta">
+              <span class="conversacion__estado">{{ estados[c.estado] }}</span>
+              {{ textos.ultimoMensaje }}: {{ c.fecha_ultimo_mensaje | date: 'medium' }}
+            </p>
+            <div class="acciones">
+              <a app-boton variante="secundario" [routerLink]="['/tutor', c.id_conversacion]">
+                {{ textos.abrir }}<span class="visualmente-oculto">: {{ c.tema }}</span>
+              </a>
+              <button app-boton type="button" variante="peligro" (click)="pedirBorrar(c)">
+                {{ textos.borrar }}<span class="visualmente-oculto">: {{ c.tema }}</span>
+              </button>
+            </div>
+          </app-tarjeta>
+        </li>
+      }
+    </ul>
+    @if (hayMas()) {
+      <button
+        app-boton
+        type="button"
+        variante="secundario"
+        class="cargar-mas"
+        [cargando]="cargando()"
+        [disabled]="cargando()"
+        (click)="cargarMas()"
+      >
+        {{ textos.cargarMas }}
+      </button>
+    }
+  }
+</section>
+
+<app-dialogo-confirmacion
+  [abierto]="aBorrar() !== null"
+  [titulo]="textos.borrarTitulo"
+  [textoConfirmar]="textos.borrar"
+  variante="peligro"
+  [cargando]="borrando()"
+  (confirmar)="borrar()"
+  (cancelar)="cancelarBorrar()"
+>
+  <p>
+    <strong>{{ aBorrar()?.tema }}</strong>
+  </p>
+  <p>{{ textos.borrarTexto }}</p>
+</app-dialogo-confirmacion>

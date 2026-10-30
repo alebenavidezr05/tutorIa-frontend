@@ -1,0 +1,107 @@
+@use 'mixins' as *;
+
+:host {
+  display: block;
+}
+
+.burbuja {
+  padding: var(--espacio-3) var(--espacio-4);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg) var(--radio-lg) var(--radio-lg) var(--radio-sm);
+  background: var(--color-superficie);
+
+  @include desde(md) {
+    max-width: 85%;
+  }
+}
+
+.burbuja__autor {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  margin-bottom: var(--espacio-2);
+  font-size: var(--texto-sm);
+  font-weight: 800;
+}
+
+/* minmax(0, 1fr): una fórmula o tabla larga se desplaza dentro de su caja, no ensancha la burbuja. */
+.burbuja__bloques {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-3);
+  min-width: 0;
+}
+
+.burbuja__sin-verificar {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  margin: var(--espacio-3) 0 0;
+  font-size: var(--texto-sm);
+  color: var(--color-aviso);
+}
+
+.aviso-sistema {
+  display: flex;
+  gap: var(--espacio-3);
+  align-items: flex-start;
+  padding: var(--espacio-3) var(--espacio-4);
+  border: 2px solid var(--color-aviso);
+  border-radius: var(--radio-md);
+  background: var(--color-aviso-fondo);
+  color: var(--color-aviso);
+
+  @include desde(md) {
+    max-width: 85%;
+  }
+}
+
+.aviso-sistema__titulo {
+  margin: 0 0 var(--espacio-1);
+  font-weight: 800;
+}
+
+.aviso-sistema__texto {
+  margin: 0;
+  color: var(--color-texto);
+  white-space: pre-line;
+}
+
+.acciones-mensaje {
+  margin-top: var(--espacio-2);
+}
+
+.acciones-mensaje__mas {
+  @include objetivo-tactil;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: var(--espacio-1) var(--espacio-2);
+  border: 0;
+  border-radius: var(--radio-md);
+  background: transparent;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+
+  @include desde(md) {
+    display: none;
+  }
+}
+
+.acciones-mensaje__panel {
+  display: none;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--espacio-2) var(--espacio-4);
+
+  &--abierto {
+    display: flex;
+  }
+
+  @include desde(md) {
+    display: flex;
+  }
+}

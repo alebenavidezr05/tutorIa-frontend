@@ -1,0 +1,56 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  <p>{{ textos.intro }}</p>
+</header>
+
+@if (aviso(); as a) {
+  <app-aviso-error [aviso]="a" (reintentar)="mejorar()" />
+}
+
+<ul class="lista-limpia planes">
+  @for (plan of planes; track plan.id) {
+    <li>
+      <app-tarjeta [destacada]="plan.id === 'PREMIUM'" class="plan">
+        <h2 class="plan__nombre">{{ plan.nombre }}</h2>
+        @if (capacidades.suscripcion()?.plan === plan.id) {
+          <p class="plan__actual"><app-icono nombre="check" [tamano]="18" /> {{ textos.tuPlan }}</p>
+        }
+        <p class="plan__precio">
+          @if (plan.precio) {
+            {{ precio | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            <span class="plan__periodo">{{ textos.porAnio }}</span>
+          } @else {
+            {{ textos.gratis }}
+          }
+        </p>
+        <ul class="plan__lista">
+          @for (item of plan.incluye; track item) {
+            <li><app-icono nombre="check" [tamano]="18" /> {{ item }}</li>
+          }
+        </ul>
+
+        @if (plan.id === 'PREMIUM') {
+          @if (capacidades.esPremium()) {
+            <p class="plan__gracias">{{ textos.yaPremium }}</p>
+            @if (capacidades.suscripcion()?.fecha_fin; as fin) {
+              <p class="texto-suave">{{ textos.vence }} {{ fin | date: 'longDate' }}</p>
+            }
+          } @else {
+            <button
+              app-boton
+              type="button"
+              variante="acento"
+              [bloque]="true"
+              [cargando]="redirigiendo()"
+              [disabled]="redirigiendo()"
+              (click)="mejorar()"
+            >
+              {{ redirigiendo() ? textos.redirigiendo : textos.mejorar }}
+            </button>
+            <p class="texto-suave plan__seguro">{{ textos.pagoSeguro }}</p>
+          }
+        }
+      </app-tarjeta>
+    </li>
+  }
+</ul>

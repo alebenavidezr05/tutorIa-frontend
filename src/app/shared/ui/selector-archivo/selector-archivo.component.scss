@@ -1,0 +1,118 @@
+@use 'mixins' as *;
+
+.selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2) var(--espacio-3);
+  align-items: center;
+  padding: var(--espacio-3);
+  border: 2px dashed var(--color-borde-control);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie);
+
+  &--arrastrando {
+    border-style: solid;
+    border-color: var(--color-acento);
+  }
+
+  &--compacto {
+    padding: var(--espacio-2);
+    border-style: solid;
+    border-width: 1px;
+  }
+}
+
+.selector__boton {
+  @include objetivo-tactil;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-4);
+  border: 2px solid var(--color-borde-control);
+  border-radius: var(--radio-md);
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-fondo-alterno);
+  }
+}
+
+/* El input está oculto visualmente: el foco se muestra en su etiqueta. */
+.selector__input:focus-visible + .selector__boton {
+  @include foco-visible;
+}
+
+.selector__input:disabled + .selector__boton {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.selector__soltar {
+  color: var(--color-texto-suave);
+}
+
+.selector__ayuda {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+
+.selector__elegido {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  align-items: center;
+  flex-basis: 100%;
+  min-width: 0;
+}
+
+.selector__vista {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--radio-sm);
+  border: 1px solid var(--color-borde);
+}
+
+.selector__icono-archivo {
+  display: inline-flex;
+  padding: var(--espacio-3);
+  border-radius: var(--radio-sm);
+  background: var(--color-fondo-alterno);
+}
+
+.selector__nombre {
+  flex: 1 1 10rem;
+  min-width: 0;
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.selector__tamano {
+  display: block;
+  font-weight: 400;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+
+.selector__quitar {
+  @include objetivo-tactil;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: var(--espacio-1) var(--espacio-3);
+  border: 1px solid var(--color-borde-control);
+  border-radius: var(--radio-md);
+  background: transparent;
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+app-barra-progreso {
+  flex-basis: 100%;
+}

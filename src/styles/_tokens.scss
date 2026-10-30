@@ -1,0 +1,68 @@
+// ÚNICO archivo con valores de color y medidas de marca.
+// Los hexadecimales se estimaron a partir de docs/brand/identidad-visual.png (muestreo de píxeles:
+// marino #0B1B2D, coral #FE5D3B, crema #EDE9E0). Confírmalos con los oficiales y cámbialos solo aquí.
+// Ningún componente usa estos tokens directamente: usa los alias de _tema.scss.
+
+:root {
+  /* Marca */
+  --ti-marino-900: #0b1b2e; /* primario: texto, botón principal, fondos oscuros */
+  --ti-marino-800: #13253b;
+  --ti-marino-700: #1b2e45;
+  --ti-marino-500: #4a5b70;
+  --ti-marino-100: #dce2ea;
+  --ti-coral-500: #ff5c3d; /* acento: hoja del logo, resaltados */
+  --ti-coral-600: #e04526;
+  --ti-coral-100: #ffe4dd;
+  --ti-crema-50: #f7f4ee;
+  --ti-crema-100: #f0ebe1; /* fondo base */
+  --ti-crema-200: #e4ddcf;
+  --ti-crema-300: #c9bfad;
+
+  /* Semánticos (estados) sobre fondo claro */
+  --ti-exito: #1f7a4d;
+  --ti-error: #b3261e;
+  --ti-aviso: #8a5a00;
+  --ti-exito-fondo: #e3f1e9;
+  --ti-error-fondo: #f9e3e1;
+  --ti-aviso-fondo: #f6ecd6;
+
+  /* Semánticos sobre fondo oscuro (contraste AA sobre marino) */
+  --ti-exito-claro: #8fd9b0;
+  --ti-error-claro: #f6b4ae;
+  --ti-aviso-claro: #f2c46b;
+  --ti-exito-fondo-oscuro: #12352a;
+  --ti-error-fondo-oscuro: #3d1a1d;
+  --ti-aviso-fondo-oscuro: #3a2e14;
+
+  /* Forma */
+  --radio-sm: 8px;
+  --radio-md: 12px;
+  --radio-lg: 20px;
+  --radio-pildora: 999px;
+
+  /* Espaciado (múltiplos de 4 px) */
+  --espacio-1: 4px;
+  --espacio-2: 8px;
+  --espacio-3: 12px;
+  --espacio-4: 16px;
+  --espacio-5: 24px;
+  --espacio-6: 32px;
+  --espacio-7: 48px;
+  --espacio-8: 64px;
+
+  /* Puntos de quiebre (documentación; las media queries usan los de SCSS de abajo) */
+  --bp-sm: 600px;
+  --bp-md: 900px;
+  --bp-lg: 1200px;
+
+  /* Otros */
+  --objetivo-tactil: 44px;
+  --ancho-lectura: 70ch;
+  --ancho-contenido: 1120px;
+  --duracion-transicion: 160ms;
+}
+
+// Las media queries no aceptan variables CSS: estos valores reflejan --bp-*.
+$bp-sm: 600px;
+$bp-md: 900px;
+$bp-lg: 1200px;

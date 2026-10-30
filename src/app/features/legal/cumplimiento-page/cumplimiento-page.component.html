@@ -1,0 +1,65 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  @for (parrafo of textos.intro; track parrafo) {
+    <p>{{ parrafo }}</p>
+  }
+</header>
+
+@if (cargando()) {
+  <app-spinner etiqueta="Cargando…" />
+} @else if (error()) {
+  <div class="alerta alerta--error" role="alert">
+    <app-icono class="alerta__icono" nombre="alerta" />
+    <div class="alerta__cuerpo">
+      <p>{{ textos.error }}</p>
+      <button app-boton type="button" variante="secundario" (click)="cargar()">
+        {{ textos.reintentar }}
+      </button>
+    </div>
+  </div>
+} @else if (datos(); as d) {
+  <section aria-labelledby="cumplimiento-proveedores">
+    <h2 id="cumplimiento-proveedores">{{ textos.proveedores }}</h2>
+    <ul class="lista-limpia rejilla">
+      @for (p of d.proveedores; track p.nombre) {
+        <li>
+          <app-tarjeta class="proveedor">
+            <h3>{{ p.nombre }}</h3>
+            <dl>
+              <dt>{{ textos.datosEnviados }}</dt>
+              <dd>{{ p.datos_enviados }}</dd>
+              <dt>{{ textos.finalidad }}</dt>
+              <dd>{{ p.finalidad }}</dd>
+            </dl>
+          </app-tarjeta>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="cumplimiento-edad">
+    <h2 id="cumplimiento-edad">{{ textos.edad }}</h2>
+    <p>{{ textoEdad() }}</p>
+  </section>
+
+  <section aria-labelledby="cumplimiento-retencion">
+    <h2 id="cumplimiento-retencion">{{ textos.retencion }}</h2>
+    <ul class="retencion">
+      @for (r of retencion(); track r.clave) {
+        <li>
+          <strong>{{ r.nombre }}:</strong> {{ r.dias }}
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="cumplimiento-contacto">
+    <h2 id="cumplimiento-contacto">{{ textos.contacto }}</h2>
+    <p>
+      <a [href]="'mailto:' + d.contacto">{{ d.contacto }}</a>
+    </p>
+    <p>
+      <a class="enlace-boton" routerLink="/politica">{{ textos.politica }}</a>
+    </p>
+  </section>
+}

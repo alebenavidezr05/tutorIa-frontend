@@ -1,0 +1,6 @@
+// Punto de entrada de estilos globales. Orden: tokens → alias → tipografía → base → utilidades.
+@use 'tokens';
+@use 'tema';
+@use 'tipografia';
+@use 'base';
+@use 'utilidades';

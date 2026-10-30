@@ -1,0 +1,89 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  @if (flujo.cuestionario(); as c) {
+    <p>{{ c.tema }}</p>
+  }
+</header>
+
+@if (cargando()) {
+  <app-spinner [etiqueta]="textos.cargando" />
+} @else if (error()) {
+  <app-estado-vacio [titulo]="textos.error">
+    <button app-boton type="button" variante="primario" (click)="cargar()">Reintentar</button>
+    <a app-boton variante="secundario" routerLink="/tema">{{ textos.volver }}</a>
+  </app-estado-vacio>
+} @else if (flujo.preguntaActual(); as pregunta) {
+  <div class="cuestionario">
+    <app-barra-progreso
+      [valor]="flujo.indice() + 1"
+      [max]="flujo.total()"
+      [etiqueta]="progreso()"
+      idBase="cuestionario"
+    />
+
+    <fieldset class="pregunta" aria-labelledby="cuestionario-etiqueta cuestionario-enunciado">
+      <h2 #enunciado id="cuestionario-enunciado" class="pregunta__enunciado" tabindex="-1">
+        {{ pregunta.enunciado }}
+      </h2>
+      <ul class="lista-limpia opciones">
+        @for (opcion of opciones(); track opcion.letra) {
+          <li>
+            <label
+              class="opcion"
+              [class.opcion--elegida]="flujo.respuestaActual() === opcion.letra"
+            >
+              <input
+                type="radio"
+                class="casilla-nativa"
+                [name]="nombreGrupo()"
+                [value]="opcion.letra"
+                [checked]="flujo.respuestaActual() === opcion.letra"
+                (change)="responder(opcion.letra)"
+              />
+              <span class="opcion__letra" aria-hidden="true">{{ opcion.etiqueta }}</span>
+              <span>{{ opcion.texto }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </fieldset>
+
+    @if (flujo.respuestaActual() === null) {
+      <p class="texto-suave" id="cuestionario-ayuda">{{ textos.eligeUna }}</p>
+    }
+
+    <div class="navegacion">
+      <button
+        app-boton
+        type="button"
+        variante="secundario"
+        [disabled]="flujo.esPrimera() || enviando()"
+        (click)="anterior()"
+      >
+        {{ textos.anterior }}
+      </button>
+      @if (flujo.esUltima()) {
+        <button
+          app-boton
+          type="button"
+          variante="acento"
+          [cargando]="enviando()"
+          [disabled]="!flujo.completo() || enviando()"
+          (click)="enviar()"
+        >
+          {{ enviando() ? textos.enviando : textos.enviar }}
+        </button>
+      } @else {
+        <button
+          app-boton
+          type="button"
+          variante="primario"
+          [disabled]="flujo.respuestaActual() === null"
+          (click)="siguiente()"
+        >
+          {{ textos.siguiente }}
+        </button>
+      }
+    </div>
+  </div>
+}

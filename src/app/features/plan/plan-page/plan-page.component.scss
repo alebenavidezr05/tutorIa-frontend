@@ -1,0 +1,54 @@
+@use 'mixins' as *;
+
+.plan__cabecera h1 {
+  margin-top: var(--espacio-3);
+}
+
+.plan {
+  display: grid;
+  gap: var(--espacio-5);
+  grid-template-columns: minmax(0, 1fr);
+
+  @include desde(md) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.plan__explicacion {
+  max-width: var(--ancho-lectura);
+  white-space: pre-line;
+}
+
+.plan__actividades {
+  display: grid;
+  gap: var(--espacio-4);
+  margin-top: var(--espacio-4);
+}
+
+.plan__lateral {
+  display: grid;
+  gap: var(--espacio-4);
+
+  @include desde(md) {
+    position: sticky;
+    top: 88px;
+  }
+}
+
+.plan__subtitulo {
+  font-size: var(--texto-lg);
+}
+
+.plan__tecnicas {
+  margin: 0;
+  padding-left: var(--espacio-5);
+
+  li + li {
+    margin-top: var(--espacio-2);
+  }
+}
+
+.plan__fuentes {
+  margin-top: var(--espacio-6);
+}

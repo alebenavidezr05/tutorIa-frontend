@@ -1,0 +1,99 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  <p>{{ textos.intro }}</p>
+</header>
+
+<app-tarjeta>
+  <section aria-labelledby="privacidad-autorizaciones">
+    <app-seccion-autorizaciones
+      [consentimientos]="consentimientos()"
+      [procesando]="guardandoFinalidad()"
+      (cambiar)="alCambiarConsentimiento($event)"
+    />
+  </section>
+</app-tarjeta>
+
+<app-tarjeta>
+  <section aria-labelledby="privacidad-mis-datos">
+    <app-seccion-mis-datos
+      [misDatos]="misDatos()"
+      [error]="errorMisDatos()"
+      [descargando]="descargando()"
+      (descargar)="descargar()"
+    />
+  </section>
+</app-tarjeta>
+
+<app-tarjeta>
+  <section aria-labelledby="privacidad-corregir">
+    <h2 id="privacidad-corregir">{{ textos.corregir.titulo }}</h2>
+    <p>{{ textos.corregir.texto }}</p>
+    <a app-boton variante="secundario" routerLink="/perfil">{{ textos.corregir.enlace }}</a>
+  </section>
+</app-tarjeta>
+
+<app-tarjeta>
+  <section aria-labelledby="privacidad-solicitudes">
+    <div aria-live="polite">
+      @if (confirmacion(); as mensaje) {
+        <p class="alerta alerta--exito">
+          <span class="alerta__cuerpo">{{ mensaje }}</span>
+        </p>
+      }
+    </div>
+    <app-seccion-solicitudes
+      [solicitudes]="solicitudes()"
+      [enviando]="enviandoSolicitud()"
+      [creadas]="solicitudesCreadas()"
+      (crear)="crearSolicitud($event)"
+    />
+  </section>
+</app-tarjeta>
+
+<app-tarjeta>
+  <section aria-labelledby="privacidad-eliminar">
+    <h2 id="privacidad-eliminar">{{ textos.eliminar.titulo }}</h2>
+    <p>{{ textos.eliminar.texto }}</p>
+    <button app-boton type="button" variante="peligro" (click)="abrirEliminar()">
+      {{ textos.eliminar.boton }}
+    </button>
+  </section>
+</app-tarjeta>
+
+<section aria-labelledby="privacidad-enlaces">
+  <h2 id="privacidad-enlaces">{{ textos.enlaces.titulo }}</h2>
+  <ul>
+    <li>
+      <a class="enlace-boton" routerLink="/politica">{{ textos.enlaces.politica }}</a>
+    </li>
+    @if (politica(); as p) {
+      <li>
+        <a class="enlace-boton" [href]="'mailto:' + p.responsable.correo_datos">
+          {{ textos.enlaces.contacto }}: {{ p.responsable.correo_datos }}
+        </a>
+      </li>
+    }
+  </ul>
+</section>
+
+<app-dialogo-confirmacion
+  [abierto]="dialogo() === 'personalizacion'"
+  [titulo]="textos.confirmarPersonalizacion.titulo"
+  [textoConfirmar]="textos.confirmarPersonalizacion.confirmar"
+  (confirmar)="confirmarSinPersonalizacion()"
+  (cancelar)="cerrarDialogo()"
+>
+  <p>{{ textos.confirmarPersonalizacion.texto }}</p>
+</app-dialogo-confirmacion>
+
+<app-dialogo-confirmacion
+  [abierto]="dialogo() === 'eliminar'"
+  [titulo]="textos.eliminar.dialogoTitulo"
+  [textoConfirmar]="textos.eliminar.confirmar"
+  variante="peligro"
+  [cargando]="enviandoSolicitud()"
+  (confirmar)="solicitarEliminacion()"
+  (cancelar)="cerrarDialogo()"
+>
+  <p>{{ textos.eliminar.texto }}</p>
+</app-dialogo-confirmacion>

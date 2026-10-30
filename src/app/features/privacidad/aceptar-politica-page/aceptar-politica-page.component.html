@@ -1,0 +1,52 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  <p>{{ textos.intro }}</p>
+</header>
+
+@if (cargando()) {
+  <app-spinner etiqueta="Cargando la política…" />
+} @else if (error()) {
+  <div class="alerta alerta--error" role="alert">
+    <app-icono class="alerta__icono" nombre="alerta" />
+    <div class="alerta__cuerpo">
+      <p>{{ textos.error }}</p>
+      <button app-boton type="button" variante="secundario" (click)="cargar()">
+        {{ textos.reintentar }}
+      </button>
+    </div>
+  </div>
+} @else if (politica(); as p) {
+  <p class="texto-suave">{{ textos.version }} {{ p.version }} · {{ p.vigente_desde }}</p>
+  <div
+    class="texto"
+    tabindex="0"
+    role="region"
+    aria-label="Texto de la política de tratamiento de datos"
+  >
+    <app-texto-legal [texto]="p.texto" />
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="aceptar()" novalidate>
+    <app-casilla-consentimiento
+      idCasilla="aceptar-tratamiento"
+      [control]="form.controls.aceptaTratamiento"
+      [texto]="finalidades().TRATAMIENTO ?? ''"
+      [obligatoria]="true"
+    />
+    <app-casilla-consentimiento
+      idCasilla="aceptar-transferencia"
+      [control]="form.controls.aceptaTransferenciaInternacional"
+      [texto]="finalidades().TRANSFERENCIA_INTERNACIONAL ?? ''"
+      [obligatoria]="true"
+    />
+    <button
+      app-boton
+      type="submit"
+      variante="acento"
+      [cargando]="enviando()"
+      [disabled]="deshabilitado()"
+    >
+      {{ textos.boton }}
+    </button>
+  </form>
+}

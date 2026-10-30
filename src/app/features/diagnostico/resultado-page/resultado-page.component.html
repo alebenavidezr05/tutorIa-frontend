@@ -1,0 +1,67 @@
+@if (resultado(); as r) {
+  <header class="encabezado-pagina">
+    <h1>{{ textos.titulo }}</h1>
+  </header>
+
+  <app-tarjeta [elevada]="true" class="resumen">
+    <app-insignia-nivel [nivel]="r.nivel_estimado" [conDescripcion]="true" />
+    <p class="resumen__aciertos">{{ textoAciertos() }}</p>
+
+    @if (aviso(); as a) {
+      <app-aviso-error [aviso]="a" (reintentar)="generarPlan()" />
+    }
+
+    <div aria-live="polite">
+      @if (generando()) {
+        <app-spinner [etiqueta]="textos.generando" />
+      }
+    </div>
+
+    <button
+      app-boton
+      type="button"
+      variante="acento"
+      [bloque]="true"
+      [cargando]="generando()"
+      [disabled]="generando()"
+      (click)="generarPlan()"
+    >
+      {{ textos.generar }}
+    </button>
+  </app-tarjeta>
+
+  <section aria-labelledby="resultado-revision">
+    <h2 id="resultado-revision">{{ textos.revision }}</h2>
+    <ol class="lista-limpia revision">
+      @for (item of revision(); track item.id) {
+        <li>
+          <app-tarjeta>
+            <h3 class="revision__enunciado">{{ item.numero }}. {{ item.enunciado }}</h3>
+            <p class="revision__estado" [class.revision__estado--ok]="item.esCorrecta">
+              <app-icono [nombre]="item.esCorrecta ? 'check' : 'alerta'" [tamano]="18" />
+              <strong>{{ item.esCorrecta ? textos.correcta : textos.incorrecta }}</strong>
+            </p>
+            <p>
+              <strong>{{ textos.tuRespuesta }}:</strong> ({{ item.tuRespuesta.letra }})
+              {{ item.tuRespuesta.texto }}
+            </p>
+            @if (!item.esCorrecta) {
+              <p>
+                <strong>{{ textos.respuestaCorrecta }}:</strong> ({{ item.correcta.letra }})
+                {{ item.correcta.texto }}
+              </p>
+            }
+            @if (item.fuentes.length > 0) {
+              <app-lista-referencias [referencias]="item.fuentes" />
+            }
+          </app-tarjeta>
+        </li>
+      }
+    </ol>
+  </section>
+} @else {
+  <app-estado-vacio [titulo]="textos.noEncontrado" [texto]="textos.noEncontradoTexto">
+    <a app-boton variante="primario" routerLink="/historial">{{ textos.historial }}</a>
+    <a app-boton variante="secundario" routerLink="/tema">{{ textos.nuevoTema }}</a>
+  </app-estado-vacio>
+}

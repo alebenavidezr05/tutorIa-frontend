@@ -1,0 +1,154 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+</header>
+
+<div class="perfil">
+  <app-tarjeta>
+    <h2>{{ textos.datos }}</h2>
+    @if (usuario(); as u) {
+      <p>
+        <strong>{{ textos.correo }}:</strong> {{ u.correo }}
+      </p>
+    }
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      <app-campo-formulario
+        [etiqueta]="textos.nombre"
+        idCampo="perfil-nombre"
+        [control]="form.controls.nombre"
+      >
+        <input
+          appControlCampo
+          class="control"
+          type="text"
+          autocomplete="name"
+          formControlName="nombre"
+        />
+      </app-campo-formulario>
+
+      <fieldset class="perfil__tipo">
+        <legend class="perfil__legend">{{ textos.tipoNivel }}</legend>
+        <label class="perfil__opcion">
+          <input type="radio" class="casilla-nativa" formControlName="tipoNivel" value="COLEGIO" />
+          {{ textos.colegio }}
+        </label>
+        <label class="perfil__opcion">
+          <input
+            type="radio"
+            class="casilla-nativa"
+            formControlName="tipoNivel"
+            value="UNIVERSIDAD_TECNICA"
+          />
+          {{ textos.universidad }}
+        </label>
+      </fieldset>
+
+      <app-campo-formulario
+        [etiqueta]="textos.nivelEducativo"
+        idCampo="perfil-nivel"
+        [control]="form.controls.nivelEducativo"
+      >
+        <select appControlCampo class="control" formControlName="nivelEducativo">
+          <option value="" disabled>{{ textos.eligeNivel }}</option>
+          @for (opcion of opcionesNivel(); track opcion.valor) {
+            <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+          }
+        </select>
+      </app-campo-formulario>
+
+      <button
+        app-boton
+        type="submit"
+        variante="primario"
+        [cargando]="guardando()"
+        [disabled]="guardando()"
+      >
+        {{ textos.guardar }}
+      </button>
+    </form>
+  </app-tarjeta>
+
+  <app-tarjeta>
+    <h2>{{ textos.plan }}: {{ nombrePlan() }}</h2>
+    @if (cupos().length > 0) {
+      <h3 class="perfil__subtitulo">{{ textos.cupos }}</h3>
+      <dl class="perfil__cupos">
+        @for (cupo of cupos(); track cupo.clave) {
+          <div>
+            <dt>{{ cupo.nombre }}</dt>
+            <dd>{{ cupo.valor }}</dd>
+          </div>
+        }
+      </dl>
+    }
+    <a class="enlace-boton" routerLink="/planes">{{ textos.verPlanes }}</a>
+  </app-tarjeta>
+
+  <app-tarjeta>
+    <h2>{{ textos.reporte }}</h2>
+    <p>{{ textos.reporteTexto }}</p>
+    @if (avisoReporte(); as a) {
+      <app-aviso-error [aviso]="a" (reintentar)="descargarReporte()" />
+    }
+    @if (tieneReporte()) {
+      <button
+        app-boton
+        type="button"
+        variante="secundario"
+        [cargando]="descargando()"
+        [disabled]="descargando()"
+        (click)="descargarReporte()"
+      >
+        <app-icono nombre="descargar" /> {{ textos.descargarReporte }}
+      </button>
+    } @else {
+      <!-- Control de pago visible pero deshabilitado, con la razón. -->
+      <button
+        app-boton
+        type="button"
+        variante="secundario"
+        aria-disabled="true"
+        aria-describedby="perfil-reporte-razon"
+      >
+        <app-icono nombre="candado" /> {{ textos.descargarReporte }}
+      </button>
+      <p id="perfil-reporte-razon" class="texto-suave">{{ textos.reporteBloqueado }}</p>
+      <app-bloqueo-premium [compacto]="true" />
+    }
+  </app-tarjeta>
+
+  <app-tarjeta>
+    <h2>{{ textos.aprendizaje }}</h2>
+    <p>{{ textos.aprendizajeTexto }}</p>
+    <a app-boton variante="secundario" routerLink="/perfil/aprendizaje">{{ textos.aprendizaje }}</a>
+    <p class="perfil__enlace">
+      <a class="enlace-boton" routerLink="/privacidad">{{ textos.privacidad }}</a>
+    </p>
+  </app-tarjeta>
+</div>
+
+<div class="acciones perfil__salida">
+  <button
+    app-boton
+    type="button"
+    variante="secundario"
+    [disabled]="cerrando()"
+    (click)="cerrarSesion()"
+  >
+    {{ textos.cerrarSesion }}
+  </button>
+  <button app-boton type="button" variante="peligro" (click)="dialogoDesactivar.set(true)">
+    {{ textos.desactivar }}
+  </button>
+</div>
+
+<app-dialogo-confirmacion
+  [abierto]="dialogoDesactivar()"
+  [titulo]="textos.desactivarTitulo"
+  [textoConfirmar]="textos.desactivar"
+  variante="peligro"
+  [cargando]="desactivando()"
+  (confirmar)="desactivar()"
+  (cancelar)="dialogoDesactivar.set(false)"
+>
+  <p>{{ textos.desactivarTexto }}</p>
+</app-dialogo-confirmacion>

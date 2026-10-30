@@ -1,0 +1,56 @@
+@use 'mixins' as *;
+
+.bloque {
+  margin-bottom: var(--espacio-4);
+}
+
+.aprendizaje {
+  display: grid;
+  gap: var(--espacio-4);
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: var(--espacio-5);
+
+  @include desde(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+h2 {
+  font-size: var(--texto-lg);
+}
+
+.aprendizaje__datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-4);
+  margin: 0;
+
+  dt {
+    font-size: var(--texto-sm);
+    color: var(--color-texto-suave);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 700;
+  }
+}
+
+.aprendizaje__formatos {
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+.aprendizaje__tema {
+  font-size: var(--texto-md);
+}
+
+.aprendizaje__rotulo {
+  margin: var(--espacio-2) 0 var(--espacio-1);
+  font-weight: 700;
+}
+
+.aprendizaje__control {
+  margin-top: var(--espacio-6);
+}

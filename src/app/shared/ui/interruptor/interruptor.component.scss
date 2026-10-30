@@ -1,0 +1,81 @@
+@use 'mixins' as *;
+
+.interruptor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.interruptor__textos {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.interruptor__etiqueta {
+  font-weight: 700;
+}
+
+.interruptor__descripcion {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+
+.interruptor__boton {
+  @include objetivo-tactil;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-2);
+  border: 0;
+  border-radius: var(--radio-md);
+  background: transparent;
+  color: var(--color-texto);
+  font-weight: 700;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.interruptor__pista {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  border: 2px solid var(--color-borde-control);
+  border-radius: var(--radio-pildora);
+  background: var(--color-superficie);
+  transition: background-color var(--duracion-transicion);
+
+  span {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-borde-control);
+    transition: transform var(--duracion-transicion);
+  }
+}
+
+[aria-checked='true'] .interruptor__pista {
+  border-color: var(--color-primario);
+  background: var(--color-primario);
+
+  span {
+    background: var(--color-sobre-primario);
+    transform: translateX(20px);
+  }
+}
+
+.interruptor__estado {
+  min-width: 7.5em;
+  text-align: left;
+}

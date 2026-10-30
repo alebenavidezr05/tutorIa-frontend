@@ -1,0 +1,86 @@
+<p class="visualmente-oculto">{{ tutor }}:</p>
+
+@if (esAviso()) {
+  <div class="aviso-sistema" role="note">
+    <app-icono nombre="info" />
+    <div>
+      <p class="aviso-sistema__titulo">{{ textos.mensajeSistema }}</p>
+      <p class="aviso-sistema__texto">{{ mensaje().contenido }}</p>
+    </div>
+  </div>
+} @else {
+  <div class="burbuja">
+    <p class="burbuja__autor" aria-hidden="true">
+      <app-icono nombre="ia" [tamano]="16" /> {{ tutor }}
+    </p>
+    <div class="burbuja__bloques">
+      @for (item of bloques(); track item.clave) {
+        @switch (item.bloque.tipo) {
+          @case ('texto') {
+            <app-bloque-texto [bloque]="item.bloque" [fuentes]="item.fuentes" />
+          }
+          @case ('pasos') {
+            <app-bloque-pasos [bloque]="item.bloque" [fuentes]="item.fuentes" />
+          }
+          @case ('ejemplo') {
+            <app-bloque-ejemplo [bloque]="item.bloque" [fuentes]="item.fuentes" />
+          }
+          @case ('analogia') {
+            <app-bloque-analogia [bloque]="item.bloque" [fuentes]="item.fuentes" />
+          }
+          @case ('formula') {
+            <app-bloque-formula [bloque]="item.bloque" [fuentes]="item.fuentes" />
+          }
+          @case ('pregunta_comprension') {
+            <app-bloque-pregunta-comprension [bloque]="item.bloque" />
+          }
+          @case ('video') {
+            <app-bloque-video [bloque]="item.bloque" />
+          }
+          @case ('pregunta_resumen') {
+            <app-bloque-pregunta-resumen
+              [bloque]="item.bloque"
+              [tituloVideo]="item.tituloVideo"
+              [deshabilitado]="deshabilitarResumen()"
+              (responder)="responderResumen.emit($event)"
+            />
+          }
+        }
+      }
+    </div>
+
+    @if (mostrarVisual()) {
+      <app-visual-tutor [idMensaje]="mensaje().id" [visual]="mensaje().visual" />
+    }
+
+    @if (!mensaje().validado) {
+      <p class="burbuja__sin-verificar">
+        <app-icono nombre="alerta" [tamano]="16" /> {{ textos.sinVerificar }}
+      </p>
+    }
+  </div>
+}
+
+<!-- Acciones secundarias: en móvil se agrupan en "Más acciones". -->
+<div class="acciones-mensaje">
+  <button
+    type="button"
+    class="acciones-mensaje__mas"
+    [attr.aria-expanded]="accionesAbiertas()"
+    [attr.aria-controls]="idAcciones"
+    (click)="alternarAcciones()"
+  >
+    <app-icono nombre="mas" [tamano]="18" />
+    {{ accionesAbiertas() ? textosFeedback.menos : textosFeedback.mas }}
+  </button>
+  <div
+    class="acciones-mensaje__panel"
+    [class.acciones-mensaje__panel--abierto]="accionesAbiertas()"
+    [id]="idAcciones"
+  >
+    @if (!esAviso()) {
+      <app-feedback-mensaje [util]="mensaje().util" (enviar)="feedback.emit($event)" />
+    }
+    <app-reportar-mensaje [reportado]="reportado()" (reportar)="reportar.emit($event)" />
+  </div>
+</div>

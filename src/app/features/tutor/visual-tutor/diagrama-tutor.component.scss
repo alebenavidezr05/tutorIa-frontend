@@ -1,0 +1,84 @@
+.diagrama {
+  margin: 0;
+}
+
+/* Nunca desborda la página: se escala con viewBox y, si hace falta, se desplaza dentro. */
+.diagrama__lienzo {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  background: var(--color-fondo);
+
+  svg {
+    display: block;
+    width: 100%;
+    min-width: 280px;
+    height: auto;
+    max-height: 70dvh;
+  }
+}
+
+.diagrama__arista {
+  stroke: var(--color-texto-suave);
+  stroke-width: 2;
+}
+
+.diagrama__punta {
+  fill: var(--color-texto-suave);
+}
+
+.diagrama__etiqueta {
+  fill: var(--color-texto);
+  font-size: 13px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--color-fondo);
+  stroke-width: 4px;
+}
+
+.diagrama__nodo {
+  rect {
+    fill: var(--color-superficie);
+    stroke: var(--color-primario);
+    stroke-width: 2;
+  }
+
+  text {
+    fill: var(--color-texto);
+    font-family: var(--fuente-cuerpo);
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+/* Nodo principal: fondo de acento con texto marino (≈ 5.6:1). */
+.diagrama__nodo--principal {
+  rect {
+    fill: var(--color-acento);
+    stroke: var(--color-acento);
+  }
+
+  text {
+    fill: var(--color-sobre-acento);
+    font-weight: 800;
+  }
+}
+
+.diagrama__texto {
+  margin-top: var(--espacio-2);
+  font-size: var(--texto-sm);
+
+  summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--objetivo-tactil);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: var(--espacio-5);
+  }
+}

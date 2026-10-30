@@ -1,0 +1,45 @@
+<figure class="video">
+  @if (idValido()) {
+    <div class="video__marco">
+      @if (reproduciendo() && (bloque().youtube_id | youtubeEmbedUrl); as url) {
+        <iframe
+          #reproductor
+          class="video__iframe"
+          [src]="url"
+          [title]="bloque().titulo"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen
+        ></iframe>
+      } @else {
+        <button type="button" class="video__portada" (click)="reproducir()">
+          <span class="video__play" aria-hidden="true"
+            ><app-icono nombre="play" [tamano]="32"
+          /></span>
+          <span class="video__ver">{{ textos.ver }}</span>
+          <span class="video__titulo-portada">{{ bloque().titulo }}</span>
+        </button>
+      }
+    </div>
+  }
+  <figcaption class="video__pie">
+    <span class="video__titulo">{{ bloque().titulo }}</span>
+    <span class="video__meta">
+      {{ textos.canal }}: {{ bloque().canal }} · {{ textos.duracion }}:
+      <span aria-hidden="true">{{ bloque().duracion_segundos | duracion }}</span>
+      <span class="visualmente-oculto">{{ bloque().duracion_segundos | duracion: 'legible' }}</span>
+      · {{ textos.atribucion }}
+    </span>
+    @if (!bloque().verificado) {
+      <span class="video__no-verificado">{{ textos.noVerificado }}</span>
+    }
+    <span class="video__privacidad">{{ textos.privacidad }}</span>
+    @if (urlYoutube(); as url) {
+      <a class="enlace-boton" [href]="url" target="_blank" rel="noopener noreferrer">
+        {{ textos.abrir }} <app-icono nombre="externo" [tamano]="16" />
+        <span class="visualmente-oculto">{{ textoExterno }}</span>
+      </a>
+    }
+  </figcaption>
+</figure>

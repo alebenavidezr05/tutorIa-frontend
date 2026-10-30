@@ -1,0 +1,65 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  <p>{{ textos.intro }}</p>
+</header>
+
+@if (cargando()) {
+  <app-spinner etiqueta="Cargando tu historial…" />
+} @else if (error()) {
+  <app-estado-vacio [titulo]="textos.error">
+    <button app-boton type="button" variante="primario" (click)="cargar()">
+      {{ textos.reintentar }}
+    </button>
+  </app-estado-vacio>
+} @else if (datos(); as d) {
+  @if (d.items.length === 0) {
+    <app-estado-vacio [titulo]="textos.vacioTitulo" [texto]="textos.vacioTexto">
+      <a app-boton variante="acento" routerLink="/tema">{{ textos.empezar }}</a>
+    </app-estado-vacio>
+  } @else {
+    <ul class="lista-limpia rejilla">
+      @for (item of d.items; track item.id_sesion) {
+        <li>
+          <a class="tarjeta-plan" [routerLink]="['/plan', item.id_plan]">
+            <h2 class="tarjeta-plan__tema">{{ item.tema }}</h2>
+            @if (item.nivel_estimado) {
+              <app-insignia-nivel [nivel]="item.nivel_estimado" />
+            } @else {
+              <span class="texto-suave">{{ textos.sinNivel }}</span>
+            }
+            <p class="tarjeta-plan__fecha">{{ item.fecha | date: 'mediumDate' }}</p>
+            <span class="tarjeta-plan__ver" aria-hidden="true">{{ textos.verPlan }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+
+    @if (totalPaginas() > 1) {
+      <nav class="acciones paginacion" aria-label="Paginación del historial">
+        <button
+          app-boton
+          type="button"
+          variante="secundario"
+          [disabled]="pagina() <= 1"
+          (click)="irA(pagina() - 1)"
+        >
+          {{ textos.anterior }}
+        </button>
+        <span aria-live="polite">{{ textoPagina() }}</span>
+        <button
+          app-boton
+          type="button"
+          variante="secundario"
+          [disabled]="pagina() >= totalPaginas()"
+          (click)="irA(pagina() + 1)"
+        >
+          {{ textos.siguiente }}
+        </button>
+      </nav>
+    }
+  }
+
+  @if (d.limitado) {
+    <app-bloqueo-premium [titulo]="textos.limitado" [compacto]="true" />
+  }
+}

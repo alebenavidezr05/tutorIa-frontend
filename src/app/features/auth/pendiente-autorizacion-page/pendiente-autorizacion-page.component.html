@@ -1,0 +1,46 @@
+<h1>{{ textos.titulo }}</h1>
+<p>{{ textos.explicacion }}</p>
+
+<ol class="pasos">
+  @for (paso of textos.pasos; track paso) {
+    <li>{{ paso }}</li>
+  }
+</ol>
+
+<div class="alerta alerta--aviso">
+  <app-icono class="alerta__icono" nombre="info" />
+  <p class="alerta__cuerpo">{{ textos.avisoCorreo }}</p>
+</div>
+
+<h2>{{ textos.enlaceTitulo }}</h2>
+<code class="enlace-acudiente">{{ enlace }}</code>
+<div class="acciones">
+  <button app-boton type="button" variante="secundario" (click)="copiarEnlace()">
+    {{ textos.copiar }}
+  </button>
+  <button app-boton type="button" variante="texto" (click)="abrirAutorizacion()">
+    {{ textos.abrir }}
+  </button>
+</div>
+
+<div class="acciones">
+  <button
+    app-boton
+    type="button"
+    variante="acento"
+    [cargando]="revisando()"
+    [disabled]="revisando()"
+    (click)="revisar()"
+  >
+    {{ textos.revisar }}
+  </button>
+  <button
+    app-boton
+    type="button"
+    variante="secundario"
+    [disabled]="cerrando()"
+    (click)="cerrarSesion()"
+  >
+    {{ textos.cerrarSesion }}
+  </button>
+</div>

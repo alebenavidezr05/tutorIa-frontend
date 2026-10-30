@@ -1,0 +1,10 @@
+export * from './archivo.validator';
+export * from './contrasena.validator';
+export * from './correo.validator';
+export * from './fecha-nacimiento.validator';
+export * from './mensaje.validator';
+export * from './mensajes-validacion';
+export * from './nivel-educativo.validator';
+export * from './nombre.validator';
+export * from './tema.validator';
+export { longitudTextoValidator, normalizarParaComparar, normalizarTexto } from './texto.validator';

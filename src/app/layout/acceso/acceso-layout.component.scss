@@ -1,0 +1,103 @@
+@use 'mixins' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+
+  @include desde(md) {
+    flex-direction: row;
+  }
+}
+
+/* En móvil: panel arriba y compacto. */
+.panel {
+  padding: max(var(--espacio-5), env(safe-area-inset-top)) var(--espacio-4) var(--espacio-5);
+  background: var(--color-panel-marca);
+  color: var(--color-sobre-panel-marca);
+
+  @include desde(md) {
+    position: sticky;
+    top: 0;
+    flex: 0 0 40%;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    padding: var(--espacio-8) var(--espacio-7);
+  }
+}
+
+/* Margen de respeto alrededor del logo: lo da el padding del panel. */
+.panel__interior {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+
+  @include desde(md) {
+    gap: var(--espacio-5);
+  }
+}
+
+.panel__lema {
+  margin: var(--espacio-2) 0 0;
+  font-family: var(--fuente-titulares);
+  font-size: var(--texto-lg);
+  line-height: var(--interlineado-titulo);
+
+  @include desde(md) {
+    font-size: var(--texto-2xl);
+  }
+}
+
+.panel__lema-secundario {
+  display: none;
+  margin: 0;
+  font-size: var(--texto-md);
+
+  @include desde(md) {
+    display: block;
+  }
+}
+
+.formulario {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--espacio-5) max(var(--espacio-4), env(safe-area-inset-right))
+    max(var(--espacio-5), env(safe-area-inset-bottom))
+    max(var(--espacio-4), env(safe-area-inset-left));
+  background: var(--color-fondo);
+
+  @include desde(md) {
+    padding: var(--espacio-7);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.formulario__interior {
+  flex: 1;
+  width: 100%;
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+.formulario__pie {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--espacio-2) var(--espacio-4);
+  margin: var(--espacio-6) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-sm);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--objetivo-tactil);
+  }
+}

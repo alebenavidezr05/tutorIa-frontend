@@ -1,0 +1,60 @@
+<form class="campo" (submit)="$event.preventDefault(); intentarEnviar()">
+  @if (contexto(); as ctx) {
+    <p class="campo__contexto">
+      <span
+        ><strong>{{ textos.respondiendo }}</strong> {{ ctx }}</span
+      >
+      <button type="button" class="campo__quitar" (click)="quitarContexto.emit()">
+        {{ textos.quitarContexto }}
+      </button>
+    </p>
+  }
+
+  @if (aceptaArchivos()) {
+    <app-selector-archivo
+      [archivo]="adjunto()"
+      [progreso]="progresoAdjunto()"
+      [errorServidor]="errorAdjunto()"
+      [deshabilitado]="esperando() || sinCupoArchivos()"
+      [compacto]="true"
+      [etiqueta]="textos.adjuntar"
+      (seleccionar)="adjuntar.emit($event)"
+      (quitar)="quitarAdjunto.emit()"
+    />
+  }
+
+  <label class="visualmente-oculto" for="campo-mensaje">{{ textos.etiqueta }}</label>
+  <div class="campo__fila">
+    <textarea
+      #campo
+      id="campo-mensaje"
+      class="control campo__texto"
+      rows="1"
+      enterkeyhint="send"
+      [placeholder]="textos.etiqueta"
+      [maxLength]="maximo"
+      [value]="texto()"
+      [readOnly]="esperando()"
+      [attr.aria-disabled]="esperando() ? 'true' : null"
+      [attr.aria-describedby]="describedBy()"
+      [attr.aria-invalid]="errorMensaje() ? 'true' : null"
+      (input)="alEscribir($event)"
+      (keydown)="alPulsarTecla($event)"
+    ></textarea>
+    <button type="submit" class="campo__enviar" [disabled]="!puedeEnviar()">
+      <app-icono nombre="enviar" />
+      <span class="visualmente-oculto">{{ textos.enviar }}</span>
+    </button>
+  </div>
+  <div class="campo__pie">
+    <span id="campo-mensaje-ayuda">{{ textos.ayuda }}</span>
+    <span id="campo-mensaje-contador" [class.campo__contador--limite]="cercaDelLimite()">{{
+      contador()
+    }}</span>
+  </div>
+  @if (errorMensaje(); as mensaje) {
+    <p class="mensaje-error" id="campo-mensaje-error" role="alert">
+      <app-icono nombre="alerta" [tamano]="18" /><span>{{ mensaje }}</span>
+    </p>
+  }
+</form>

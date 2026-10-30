@@ -1,0 +1,36 @@
+@use 'mixins' as *;
+
+.dialogo {
+  width: min(520px, calc(100vw - 2 * var(--espacio-4)));
+  max-height: calc(100dvh - 2 * var(--espacio-4));
+  padding: var(--espacio-5);
+  border: 2px solid var(--color-borde-control);
+  border-radius: var(--radio-lg);
+  background: var(--color-superficie-elevada);
+  color: var(--color-texto);
+  box-shadow: var(--sombra-suave);
+  overflow-y: auto;
+
+  &::backdrop {
+    background: var(--color-velo);
+  }
+}
+
+.dialogo__titulo {
+  font-size: var(--texto-lg);
+}
+
+.dialogo__cuerpo {
+  margin-bottom: var(--espacio-5);
+}
+
+.dialogo__acciones {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--espacio-2);
+
+  @include desde(sm) {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}

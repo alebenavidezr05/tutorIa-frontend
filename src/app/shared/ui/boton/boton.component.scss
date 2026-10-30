@@ -1,0 +1,96 @@
+@use 'mixins' as *;
+
+:host {
+  @include objetivo-tactil;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-5);
+  border: 2px solid transparent;
+  border-radius: var(--radio-md);
+  font-family: var(--fuente-cuerpo);
+  font-size: var(--texto-base);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duracion-transicion),
+    border-color var(--duracion-transicion);
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+:host(.boton--bloque) {
+  display: flex;
+  width: 100%;
+}
+
+:host(.boton--primario) {
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+
+  &:hover:not(:disabled) {
+    background: var(--color-primario-hover);
+  }
+}
+
+/* Texto marino sobre coral (≈ 5.6:1); nunca blanco sobre coral. */
+:host(.boton--acento) {
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+
+  &:hover:not(:disabled) {
+    background: var(--color-acento-hover);
+  }
+}
+
+:host(.boton--secundario) {
+  background: transparent;
+  border-color: var(--color-borde-control);
+  color: var(--color-texto);
+
+  &:hover:not(:disabled) {
+    background: var(--color-fondo-alterno);
+  }
+}
+
+:host(.boton--peligro) {
+  background: var(--color-error-fondo);
+  border-color: var(--color-error);
+  color: var(--color-error);
+
+  &:hover:not(:disabled) {
+    background: var(--color-superficie);
+  }
+}
+
+:host(.boton--texto) {
+  padding-inline: var(--espacio-2);
+  background: transparent;
+  color: var(--color-texto);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.boton__indicador {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentcolor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,83 @@
+@use 'mixins' as *;
+
+.campo {
+  display: grid;
+  gap: var(--espacio-2);
+}
+
+.campo__fila {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--espacio-2);
+}
+
+.campo__texto {
+  flex: 1;
+  min-height: 48px;
+  max-height: 30dvh;
+  resize: none;
+  field-sizing: content;
+
+  &[readonly] {
+    opacity: 0.7;
+  }
+}
+
+.campo__enviar {
+  @include objetivo-tactil;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: var(--radio-md);
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.campo__pie {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--espacio-1) var(--espacio-3);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-suave);
+}
+
+.campo__contador--limite {
+  color: var(--color-aviso);
+  font-weight: 700;
+}
+
+.campo__contexto {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: var(--espacio-2) var(--espacio-3);
+  border-left: 4px solid var(--color-acento);
+  border-radius: var(--radio-sm);
+  background: var(--color-fondo-alterno);
+  font-size: var(--texto-sm);
+}
+
+.campo__quitar {
+  @include objetivo-tactil;
+
+  padding: 0 var(--espacio-2);
+  border: 1px solid var(--color-borde-control);
+  border-radius: var(--radio-md);
+  background: transparent;
+  color: var(--color-texto);
+  cursor: pointer;
+}

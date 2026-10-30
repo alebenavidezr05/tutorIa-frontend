@@ -1,0 +1,52 @@
+<header class="encabezado-pagina">
+  <h1>{{ textos.titulo }}</h1>
+  <p>{{ textos.intro }}</p>
+</header>
+
+@if (cargando()) {
+  <app-spinner etiqueta="Cargando la política…" />
+} @else if (error()) {
+  <div class="alerta alerta--error" role="alert">
+    <app-icono class="alerta__icono" nombre="alerta" />
+    <div class="alerta__cuerpo">
+      <p>{{ textos.error }}</p>
+      <button app-boton type="button" variante="secundario" (click)="cargar()">
+        {{ textos.reintentar }}
+      </button>
+    </div>
+  </div>
+} @else if (politica(); as p) {
+  <app-tarjeta>
+    <dl class="datos">
+      <dt>{{ textos.version }}</dt>
+      <dd>{{ p.version }}</dd>
+      <dt>{{ textos.vigente }}</dt>
+      <dd>{{ p.vigente_desde }}</dd>
+      <dt>{{ textos.responsable }}</dt>
+      <dd>{{ p.responsable.razon_social }} · {{ textos.nit }} {{ p.responsable.nit }}</dd>
+      <dt>{{ textos.domicilio }}</dt>
+      <dd>{{ p.responsable.domicilio }}</dd>
+      <dt>{{ textos.contacto }}</dt>
+      <dd>
+        <a [href]="'mailto:' + p.responsable.correo_datos">{{ p.responsable.correo_datos }}</a>
+      </dd>
+    </dl>
+  </app-tarjeta>
+
+  <app-texto-legal [texto]="p.texto" />
+
+  <section aria-labelledby="politica-finalidades">
+    <h2 id="politica-finalidades">{{ textos.finalidades }}</h2>
+    @for (f of p.finalidades; track f.finalidad) {
+      <div class="finalidad">
+        <p>
+          <strong>{{ nombres[f.finalidad] }}</strong> ·
+          <span class="finalidad__marca">{{
+            f.obligatoria ? textos.obligatoria : textos.opcional
+          }}</span>
+        </p>
+        <p>{{ f.texto }}</p>
+      </div>
+    }
+  </section>
+}

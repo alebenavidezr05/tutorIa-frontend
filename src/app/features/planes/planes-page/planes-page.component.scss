@@ -1,0 +1,73 @@
+@use 'mixins' as *;
+
+.planes {
+  display: grid;
+  gap: var(--espacio-4);
+  grid-template-columns: minmax(0, 1fr);
+
+  @include desde(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 880px;
+  }
+
+  > li {
+    display: flex;
+  }
+}
+
+.plan {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan__nombre {
+  margin-bottom: var(--espacio-2);
+}
+
+.plan__actual {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  align-self: flex-start;
+  padding: 0 var(--espacio-3);
+  border-radius: var(--radio-pildora);
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+  font-weight: 700;
+  font-size: var(--texto-sm);
+}
+
+.plan__precio {
+  font-family: var(--fuente-titulares);
+  font-size: var(--texto-xl);
+}
+
+.plan__periodo {
+  font-family: var(--fuente-cuerpo);
+  font-size: var(--texto-base);
+  color: var(--color-texto-suave);
+}
+
+.plan__lista {
+  flex: 1;
+  margin-bottom: var(--espacio-5);
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--espacio-2);
+    margin-bottom: var(--espacio-2);
+  }
+}
+
+.plan__gracias {
+  font-weight: 700;
+}
+
+.plan__seguro {
+  margin: var(--espacio-2) 0 0;
+  font-size: var(--texto-sm);
+}

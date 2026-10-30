@@ -1,0 +1,100 @@
+<article class="actividad" [class]="claseEstado()" [attr.aria-labelledby]="idTitulo()">
+  <header class="actividad__cabecera">
+    <h3 class="actividad__titulo" [id]="idTitulo()">{{ titulo() }}</h3>
+    <span class="actividad__estado">
+      @if (actividad().estado === 'COMPLETADA') {
+        <app-icono nombre="check" [tamano]="18" />
+      }
+      {{ nombresEstado[actividad().estado] }}
+    </span>
+  </header>
+  <p class="actividad__enunciado">{{ actividad().enunciado }}</p>
+
+  <label class="actividad__etiqueta" [for]="idRespuesta()">{{ textos.respuesta }}</label>
+  <textarea
+    class="control"
+    rows="4"
+    [id]="idRespuesta()"
+    [maxLength]="maximo"
+    [value]="actividad().respuesta_usuario ?? ''"
+    [attr.aria-describedby]="idGuardado()"
+    (blur)="alSalirDelCampo($event)"
+  ></textarea>
+  <p
+    class="actividad__guardado"
+    [class.actividad__guardado--error]="estadoGuardado() === 'error'"
+    [id]="idGuardado()"
+    aria-live="polite"
+  >
+    @if (estadoGuardado() === 'guardado') {
+      <app-icono nombre="check" [tamano]="16" />
+    }
+    {{ textoGuardado() }}
+  </p>
+
+  @if (aceptaArchivos()) {
+    <div class="actividad__archivo">
+      @if (actividad().archivo; as entregado) {
+        <p class="actividad__entregado">
+          <app-icono nombre="adjuntar" [tamano]="18" />
+          <span>
+            {{ textos.archivoEntregado }}: <strong>{{ entregado.nombre }}</strong> ({{
+              entregado.tamano_bytes | tamanoArchivo
+            }})
+          </span>
+        </p>
+        <div class="acciones">
+          @if (urlArchivo(); as url) {
+            <a class="enlace-boton" [href]="url" target="_blank" rel="noopener">{{
+              textos.verArchivo
+            }}</a>
+          }
+          <button app-boton type="button" variante="secundario" (click)="quitarArchivo.emit()">
+            {{ textos.quitarArchivo }}
+          </button>
+        </div>
+      } @else if (sinCupoArchivos()) {
+        <app-bloqueo-premium [titulo]="textos.sinCupoArchivos" [compacto]="true" />
+      } @else {
+        <app-selector-archivo
+          [archivo]="entrega()?.archivo ?? null"
+          [progreso]="entrega()?.progreso ?? null"
+          [errorServidor]="entrega()?.error ?? null"
+          [deshabilitado]="subiendo()"
+          (seleccionar)="adjuntar.emit($event)"
+          (quitar)="quitarArchivo.emit()"
+        />
+        @if (entrega()?.error && entrega()?.archivo) {
+          <button app-boton type="button" variante="texto" (click)="reintentarSubida()">
+            {{ textos.subirDeNuevo }}
+          </button>
+        }
+      }
+    </div>
+  }
+
+  <div class="acciones actividad__acciones">
+    @if (actividad().estado === 'PENDIENTE') {
+      <button
+        app-boton
+        type="button"
+        variante="primario"
+        (click)="cambiarEstado.emit('COMPLETADA')"
+      >
+        <app-icono nombre="check" [tamano]="18" /> {{ textos.completar }}
+      </button>
+      <button app-boton type="button" variante="secundario" (click)="cambiarEstado.emit('OMITIDA')">
+        {{ textos.omitir }}
+      </button>
+    } @else {
+      <button
+        app-boton
+        type="button"
+        variante="secundario"
+        (click)="cambiarEstado.emit('PENDIENTE')"
+      >
+        {{ textos.reabrir }}
+      </button>
+    }
+  </div>
+</article>

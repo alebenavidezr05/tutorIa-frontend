@@ -1,0 +1,58 @@
+<h1>{{ textos.titulo }}</h1>
+<p class="texto-suave">{{ textos.subtitulo }}</p>
+
+<form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+  @if (errorGeneral(); as mensaje) {
+    <div class="alerta alerta--error" role="alert">
+      <app-icono class="alerta__icono" nombre="alerta" />
+      <p class="alerta__cuerpo">{{ mensaje }}</p>
+    </div>
+  }
+
+  <app-campo-formulario
+    [etiqueta]="textos.correo"
+    idCampo="login-correo"
+    [control]="form.controls.correo"
+  >
+    <input
+      appControlCampo
+      class="control"
+      type="email"
+      inputmode="email"
+      autocomplete="email"
+      autocapitalize="off"
+      spellcheck="false"
+      formControlName="correo"
+    />
+  </app-campo-formulario>
+
+  <app-campo-formulario
+    [etiqueta]="textos.contrasena"
+    idCampo="login-contrasena"
+    [control]="form.controls.contrasena"
+  >
+    <input
+      appControlCampo
+      class="control"
+      type="password"
+      autocomplete="current-password"
+      formControlName="contrasena"
+    />
+  </app-campo-formulario>
+
+  <button
+    app-boton
+    type="submit"
+    variante="primario"
+    [bloque]="true"
+    [cargando]="cargando()"
+    [disabled]="cargando()"
+  >
+    {{ textos.boton }}
+  </button>
+</form>
+
+<p class="acciones">
+  {{ textos.sinCuenta }}
+  <a class="enlace-boton" routerLink="/registro">{{ textos.registro }}</a>
+</p>
