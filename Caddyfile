@@ -1,0 +1,72 @@
+# Caddy para TutorIA (contenedor `frontend`). Mismo archivo en local y en producción:
+#   SITE_ADDRESS=:80                 -> HTTP simple (local, detrás de 127.0.0.1:8080)
+#   SITE_ADDRESS=tutoria.<dominio>   -> HTTPS con certificado automático de Let's Encrypt
+# Sirve la SPA y reenvía /api/ al backend por la red interna (mismo origen: la cookie
+# httpOnly SameSite=Lax funciona sin CORS cruzado).
+# Validar: docker run --rm -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+
+# Comprobación de salud interna (HEALTHCHECK de Docker): no se publica fuera del contenedor
+# y no deja registro de acceso, así que no mantiene encendida la instancia.
+:8081 {
+	bind 127.0.0.1
+	respond /salud 200
+	respond 404
+}
+
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+
+	# Registro de acceso en JSON a stdout. Lo lee deploy/ec2/apagar-si-inactivo.sh.
+	# Caddy ya oculta Cookie/Authorization/Set-Cookie por defecto; aquí se borran además.
+	# Guarda la IP del cliente (dato personal): la rotación de logs de Docker limita la retención.
+	log {
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request>headers>Cookie delete
+				request>headers>Authorization delete
+				request>headers>Proxy-Authorization delete
+				resp_headers>Set-Cookie delete
+			}
+		}
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+		Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+		Strict-Transport-Security "max-age=31536000"
+		# Único tercero: el reproductor de YouTube nocookie (solo tras un clic).
+		# 'unsafe-inline' en estilos: lo exigen los estilos en línea de Angular y KaTeX.
+		Content-Security-Policy "default-src 'self'; script-src 'self'; img-src 'self' data:; frame-src https://www.youtube-nocookie.com; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+		-Server
+	}
+
+	handle /api/* {
+		# Archivos del estudiante: hasta 5 MB + sobrecoste del multipart.
+		request_body {
+			max_size 6MB
+		}
+		# reverse_proxy añade X-Forwarded-For/Proto/Host.
+		# 120 s > CHAT_TIMEOUT_TURNO_SEGUNDOS (100) > LLM_TIMEOUT_SEGUNDOS (45).
+		reverse_proxy backend:8000 {
+			transport http {
+				response_header_timeout 120s
+			}
+		}
+	}
+
+	handle {
+		root * /srv
+		# Archivos con hash de contenido de Angular (main-XXXXXXXX.js, chunk-…, media/KaTeX_…-XXXXXXXX.woff2).
+		@hashed path_regexp hashed -[A-Za-z0-9_-]{8}\.(js|css|woff2?|ttf)$
+		@sinhash not path_regexp -[A-Za-z0-9_-]{8}\.(js|css|woff2?|ttf)$
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
+		header @sinhash Cache-Control "no-cache"
+		# SPA: cualquier ruta que no sea archivo devuelve index.html.
+		try_files {path} /index.html
+		file_server
+	}
+}

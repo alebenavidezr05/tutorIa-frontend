@@ -45,17 +45,20 @@ de sesión funciona sin CORS.
 API_BASE_URL=https://api.midominio.co/api/v1 npm run build:prod
 ```
 
-Sin la variable se usa `/api/v1` (mismo origen detrás de Nginx). `dist/tutoria-frontend/browser`
-se sube a S3 detrás de CloudFront, con *fallback* de SPA a `index.html` para 403/404.
+Sin la variable se usa `/api/v1` (mismo origen detrás de Caddy), que es lo que usa el despliegue
+por defecto (EC2 con Docker Compose). Solo la arquitectura administrada opcional (S3 + CloudFront)
+necesitaría una URL absoluta.
 
 ### Docker
 
 ```bash
-docker build -t tutoria-frontend --build-arg API_BASE_URL=/api/v1 .
+docker build -t tutoria-frontend .
 ```
 
-`nginx.conf` sirve la SPA (`try_files … /index.html`), reenvía `/api/` a `backend:8000`, añade
-cabeceras de seguridad (CSP incluida) y caché larga para los archivos con *hash*.
+La imagen sirve la SPA con **Caddy** (`Caddyfile`): *fallback* a `index.html`, `/api/` reenviado a
+`backend:8000`, cabeceras de seguridad (CSP incluida), caché larga para archivos con *hash* y
+HTTPS automático cuando `SITE_ADDRESS` es un dominio. Se usa desde `docker-compose.yml` del
+repositorio **tutorIa-compose**, donde está el README completo (Docker, ejecución local y AWS).
 
 ## Estructura
 
