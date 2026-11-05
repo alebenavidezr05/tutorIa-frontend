@@ -16,7 +16,7 @@ import { Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { AuthApiService } from '../../../core/api/auth-api.service';
 import { PrivacidadApiService } from '../../../core/api/privacidad-api.service';
-import { RUTA_INICIO, RUTA_PENDIENTE } from '../../../core/auth/auth.guard';
+import { siguientePaso } from '../../../core/auth/auth.guard';
 import { SesionService } from '../../../core/auth/sesion.service';
 import {
   ApiError,
@@ -200,8 +200,8 @@ export class RegistroPageComponent implements OnInit {
 
   private entrar(usuario: UsuarioPublico): void {
     this.sesion.establecer(usuario);
-    const pendiente = usuario.es_menor || usuario.estado_cuenta !== 'ACTIVA';
-    void this.router.navigateByUrl(pendiente ? RUTA_PENDIENTE : RUTA_INICIO);
+    // Recién creada, la cuenta va a confirmar el correo; los menores siguen luego a la autorización.
+    void this.router.navigateByUrl(siguientePaso(usuario));
   }
 
   private manejarError(error: ApiError): void {

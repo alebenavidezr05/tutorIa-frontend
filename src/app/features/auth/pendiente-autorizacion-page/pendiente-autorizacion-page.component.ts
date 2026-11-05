@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   ElementRef,
   OnInit,
   computed,
@@ -11,7 +10,7 @@ import {
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AutorizacionApiService } from '../../../core/api/autorizacion-api.service';
-import { RUTA_INICIO } from '../../../core/auth/auth.guard';
+import { RUTA_PENDIENTE, destinoPostRegistro, siguientePaso } from '../../../core/auth/auth.guard';
 import { SesionService } from '../../../core/auth/sesion.service';
 import { ApiError, MiAutorizacion, comoApiError, tieneCodigo } from '../../../core/models';
 import { NotificacionService } from '../../../core/notificaciones/notificacion.service';
@@ -25,6 +24,7 @@ import {
   marcarControles,
 } from '../../../shared/utils/aplicar-errores-servidor';
 import { conIndicador } from '../../../shared/utils/con-indicador';
+import { crearCuentaRegresiva, formatearCuenta } from '../../../shared/utils/cuenta-regresiva';
 import { enfocarPrimerError } from '../../../shared/utils/enfocar-error';
 import {
   correoValidator,
@@ -36,11 +36,7 @@ import { TEXTOS_PENDIENTE } from '../auth.textos';
 /** Espera por defecto si un 429 no trae `Retry-After`. */
 const ESPERA_POR_DEFECTO = 60;
 
-/** 105 → "1:45" */
-export function formatearCuenta(segundos: number): string {
-  const s = Math.max(0, Math.ceil(segundos));
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
+export { formatearCuenta };
 
 /**
  * El estudiante menor espera la autorización de su adulto responsable. La pantalla solo refleja
@@ -60,13 +56,6 @@ export function formatearCuenta(segundos: number): string {
   styles: `
     .estado {
       margin-block: var(--espacio-4);
-    }
-
-    .cuenta {
-      margin: 0;
-      font-size: var(--texto-sm);
-      color: var(--color-texto-suave);
-      font-variant-numeric: tabular-nums;
     }
 
     .otro-correo {
@@ -95,13 +84,15 @@ export class PendienteAutorizacionPageComponent implements OnInit {
   protected readonly error = signal(false);
   protected readonly autorizacion = signal<MiAutorizacion | null>(null);
   protected readonly revisando = signal(false);
+  /** Solo tras pulsar «Ya lo autorizó, revisar» sin que la cuenta esté activa. */
+  protected readonly sinRespuesta = signal(false);
   protected readonly reenviando = signal(false);
   protected readonly cerrando = signal(false);
   protected readonly mostrarOtroCorreo = signal(false);
   protected readonly errorReenvio = signal<string | null>(null);
+  private readonly cuenta = crearCuentaRegresiva();
   /** Segundos que faltan para poder reenviar (cuenta regresiva). */
-  protected readonly espera = signal(0);
-  private intervalo: ReturnType<typeof setInterval> | null = null;
+  protected readonly espera = this.cuenta.espera;
 
   protected readonly form = inject(NonNullableFormBuilder).group(
     {
@@ -140,10 +131,6 @@ export class PendienteAutorizacionPageComponent implements OnInit {
     return estado === 'PENDIENTE' || estado === 'EXPIRADA' || estado === 'REVOCADA';
   });
 
-  constructor() {
-    inject(DestroyRef).onDestroy(() => this.detenerCuenta());
-  }
-
   ngOnInit(): void {
     this.cargar();
   }
@@ -160,9 +147,9 @@ export class PendienteAutorizacionPageComponent implements OnInit {
             return;
           }
           this.autorizacion.set(autorizacion);
-          this.iniciarCuenta(autorizacion.puede_reenviar_en_segundos);
+          this.cuenta.iniciar(autorizacion.puede_reenviar_en_segundos);
           if (autorizacion.estado === 'AUTORIZADA') {
-            this.revisar();
+            this.revisar(false);
           } else if (autorizacion.estado === 'SIN_SOLICITUD') {
             this.mostrarOtroCorreo.set(true);
           }
@@ -171,22 +158,33 @@ export class PendienteAutorizacionPageComponent implements OnInit {
       });
   }
 
-  protected revisar(): void {
+  /** Restaura la sesión y, si ya hay otro paso (o la cuenta está completa), va allá de inmediato. */
+  protected revisar(manual = true): void {
+    if (this.revisando()) {
+      return;
+    }
     this.revisando.set(true);
+    this.sinRespuesta.set(false);
     void this.sesion.restaurar().then((usuario) => {
       this.revisando.set(false);
-      if (usuario?.estado_cuenta === 'ACTIVA') {
-        this.notificaciones.exito(this.textos.activa);
-        void this.router.navigateByUrl(RUTA_INICIO);
-      } else if (usuario) {
-        this.notificaciones.info(this.textos.sigue);
-      } else {
+      if (!usuario) {
         void this.router.navigateByUrl('/login');
+        return;
+      }
+      const paso = siguientePaso(usuario);
+      if (paso !== RUTA_PENDIENTE) {
+        if (paso === destinoPostRegistro()) {
+          this.notificaciones.exito(this.textos.activa);
+        }
+        void this.router.navigateByUrl(paso);
+      } else if (manual) {
+        this.sinRespuesta.set(true);
       }
     });
   }
 
   protected reenviar(): void {
+    this.sinRespuesta.set(false);
     this.enviar();
   }
 
@@ -233,7 +231,7 @@ export class PendienteAutorizacionPageComponent implements OnInit {
 
   private manejarErrorReenvio(error: ApiError): void {
     if (tieneCodigo(error, 'DEMASIADAS_SOLICITUDES') || error.status === 429) {
-      this.iniciarCuenta(error.reintentarEnSegundos ?? ESPERA_POR_DEFECTO);
+      this.cuenta.iniciar(error.reintentarEnSegundos ?? ESPERA_POR_DEFECTO);
       this.errorReenvio.set(this.textos.demasiadas);
       return;
     }
@@ -250,26 +248,5 @@ export class PendienteAutorizacionPageComponent implements OnInit {
       }
     }
     this.errorReenvio.set(error.mensaje);
-  }
-
-  private iniciarCuenta(segundos: number): void {
-    this.detenerCuenta();
-    const inicial = Math.max(0, Math.ceil(segundos || 0));
-    this.espera.set(inicial);
-    if (inicial > 0) {
-      this.intervalo = setInterval(() => {
-        this.espera.update((s) => Math.max(0, s - 1));
-        if (this.espera() === 0) {
-          this.detenerCuenta();
-        }
-      }, 1000);
-    }
-  }
-
-  private detenerCuenta(): void {
-    if (this.intervalo !== null) {
-      clearInterval(this.intervalo);
-      this.intervalo = null;
-    }
   }
 }

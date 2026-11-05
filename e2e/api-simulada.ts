@@ -9,6 +9,7 @@ const usuario = {
   nivel_educativo: '10',
   estado_cuenta: 'ACTIVA',
   es_menor: false,
+  correo_verificado: true,
   fecha_registro: '2026-10-01T10:00:00Z',
 };
 

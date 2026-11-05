@@ -103,11 +103,11 @@ describe('RegistroPageComponent', () => {
       acepta_personalizacion: false,
       acepta_comunicaciones: true,
     });
-    req.flush(usuarioPrueba());
-    expect(navegar).toHaveBeenCalledWith('/tema');
+    req.flush(usuarioPrueba({ correo_verificado: false }));
+    expect(navegar).toHaveBeenCalledWith('/verifica-tu-correo');
   });
 
-  it('si es menor pide el correo del adulto, lo envía y luego va a /pendiente-autorizacion', async () => {
+  it('si es menor pide el correo del adulto, lo envía y luego va a confirmar su correo', async () => {
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     await llenarDatos('2011-03-01');
     expect(el.textContent).toContain('necesitas la autorización de un adulto responsable');
@@ -127,8 +127,14 @@ describe('RegistroPageComponent', () => {
     const req = backend.expectOne(`${API}/auth/registro`);
     expect(req.request.body.entiende_datos_menor).toBe(true);
     expect(req.request.body.correo_acudiente).toBe('mama@correo.com');
-    req.flush(usuarioPrueba({ es_menor: true, estado_cuenta: 'PENDIENTE_AUTORIZACION' }));
-    expect(navegar).toHaveBeenCalledWith('/pendiente-autorizacion');
+    req.flush(
+      usuarioPrueba({
+        es_menor: true,
+        estado_cuenta: 'PENDIENTE_AUTORIZACION',
+        correo_verificado: false,
+      }),
+    );
+    expect(navegar).toHaveBeenCalledWith('/verifica-tu-correo');
   });
 
   it('el correo del adulto solo aparece entre 13 y 17 años', async () => {

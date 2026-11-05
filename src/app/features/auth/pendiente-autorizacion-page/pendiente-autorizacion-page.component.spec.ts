@@ -180,6 +180,29 @@ describe('PendienteAutorizacionPageComponent', () => {
     expect(navegar).toHaveBeenCalledWith('/tema');
   });
 
+  it('«Ya lo autorizó, revisar» con la cuenta activa navega de inmediato al destino', async () => {
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    await abrir(mia());
+    boton('Ya lo autorizó, revisar')?.click();
+    backend.expectOne(`${API}/auth/me`).flush(usuarioPrueba({ es_menor: true }));
+    await fixture.whenStable();
+    expect(navegar).toHaveBeenCalledExactlyOnceWith('/tema');
+    expect(el.textContent).not.toContain('Aún no hay respuesta');
+  });
+
+  it('«Ya lo autorizó, revisar» sin respuesta se queda y muestra el aviso (solo entonces)', async () => {
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    await abrir(mia());
+    const aviso = 'Aún no hay respuesta de tu adulto responsable. Te avisamos aquí apenas la dé.';
+    expect(el.textContent).not.toContain(aviso);
+    boton('Ya lo autorizó, revisar')?.click();
+    backend.expectOne(`${API}/auth/me`).flush(MENOR);
+    await fixture.whenStable();
+    expect(navegar).not.toHaveBeenCalled();
+    expect(el.textContent).toContain(aviso);
+    expect(TestBed.inject(NotificacionService).cola()).toHaveLength(0);
+  });
+
   it('formatearCuenta muestra minutos y segundos', () => {
     expect(formatearCuenta(105)).toBe('1:45');
     expect(formatearCuenta(5)).toBe('0:05');

@@ -9,7 +9,7 @@ import {
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../core/api/auth-api.service';
-import { RUTA_INICIO, RUTA_PENDIENTE } from '../../../core/auth/auth.guard';
+import { destinoPostRegistro, siguientePaso } from '../../../core/auth/auth.guard';
 import { SesionService } from '../../../core/auth/sesion.service';
 import { UsuarioPublico, comoApiError, tieneCodigo } from '../../../core/models';
 import { BotonComponent } from '../../../shared/ui/boton/boton.component';
@@ -80,10 +80,10 @@ export class LoginPageComponent {
 
   private entrar(usuario: UsuarioPublico): void {
     this.sesion.establecer(usuario);
-    const destino =
-      usuario.estado_cuenta === 'ACTIVA'
-        ? rutaInternaSegura(this.volver(), RUTA_INICIO)
-        : RUTA_PENDIENTE;
-    void this.router.navigateByUrl(destino);
+    const paso = siguientePaso(usuario);
+    const destino = destinoPostRegistro();
+    void this.router.navigateByUrl(
+      paso === destino ? rutaInternaSegura(this.volver(), destino) : paso,
+    );
   }
 }

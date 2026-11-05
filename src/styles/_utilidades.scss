@@ -113,6 +113,14 @@ textarea.control {
   align-items: center;
 }
 
+/* Cuenta regresiva bajo un botón de reenvío. */
+.cuenta-regresiva {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
 .mensaje-error {
   display: flex;
   gap: var(--espacio-2);

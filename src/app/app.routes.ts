@@ -1,5 +1,12 @@
 import { Routes } from '@angular/router';
-import { autenticadoGuard, cuentaActivaGuard, invitadoGuard } from './core/auth/auth.guard';
+import {
+  RUTA_PENDIENTE,
+  RUTA_VERIFICAR,
+  autenticadoGuard,
+  cuentaActivaGuard,
+  enPasoGuard,
+  invitadoGuard,
+} from './core/auth/auth.guard';
 
 /*
  * Todas las rutas son lazy. Las públicas (sin guard) son espejo de la lista cerrada del backend,
@@ -33,9 +40,27 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'verifica-tu-correo',
+        title: 'Confirma tu correo',
+        canActivate: [autenticadoGuard, enPasoGuard(RUTA_VERIFICAR)],
+        loadComponent: () =>
+          import('./features/auth/verifica-correo-page/verifica-correo-page.component').then(
+            (m) => m.VerificaCorreoPageComponent,
+          ),
+      },
+      // Enlace del correo: público, el token llega en el fragmento (#token=…).
+      {
+        path: 'verificar-correo',
+        title: 'Confirmar correo',
+        loadComponent: () =>
+          import('./features/auth/verificar-correo-page/verificar-correo-page.component').then(
+            (m) => m.VerificarCorreoPageComponent,
+          ),
+      },
+      {
         path: 'pendiente-autorizacion',
         title: 'Cuenta pendiente de autorización',
-        canActivate: [autenticadoGuard],
+        canActivate: [autenticadoGuard, enPasoGuard(RUTA_PENDIENTE)],
         loadComponent: () =>
           import('./features/auth/pendiente-autorizacion-page/pendiente-autorizacion-page.component').then(
             (m) => m.PendienteAutorizacionPageComponent,

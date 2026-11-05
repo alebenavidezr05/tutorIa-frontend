@@ -141,6 +141,16 @@ describe('errorInterceptor', () => {
     expect(notificaciones.cola()).toHaveLength(0);
   });
 
+  it('CORREO_NO_VERIFICADO lleva a /verifica-tu-correo sin toast', async () => {
+    const promesa = pedir();
+    backend
+      .expectOne(`${API}/recurso`)
+      .flush(cuerpoError('CORREO_NO_VERIFICADO'), { status: 403, statusText: '' });
+    await promesa;
+    expect(router.navigate).toHaveBeenCalledWith(['/verifica-tu-correo']);
+    expect(notificaciones.cola()).toHaveLength(0);
+  });
+
   it('LIMITE_USO se deja a la pantalla (sin toast)', async () => {
     const promesa = pedir();
     backend

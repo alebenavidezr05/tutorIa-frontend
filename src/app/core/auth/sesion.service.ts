@@ -17,7 +17,11 @@ export class SesionService {
 
   readonly usuario = this._usuario.asReadonly();
   readonly autenticado = computed(() => this._usuario() !== null);
-  readonly cuentaActiva = computed(() => this._usuario()?.estado_cuenta === 'ACTIVA');
+  /** Correo confirmado y cuenta ACTIVA: ya puede usar las rutas de la aplicación. */
+  readonly cuentaActiva = computed(() => {
+    const usuario = this._usuario();
+    return usuario?.estado_cuenta === 'ACTIVA' && usuario.correo_verificado !== false;
+  });
 
   /** Consulta `/auth/me`. Si no hay sesión deja `null` sin notificar. */
   restaurar(): Promise<UsuarioPublico | null> {

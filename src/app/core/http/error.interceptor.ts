@@ -27,6 +27,9 @@ export const CODIGOS_EN_PANTALLA: ReadonlySet<CodigoError> = new Set<CodigoError
   'CONSENTIMIENTO_REQUERIDO',
   'POLITICA_DESACTUALIZADA',
   'AUTORIZACION_PENDIENTE',
+  'CORREO_NO_VERIFICADO',
+  'VERIFICACION_INVALIDA',
+  'CORREO_YA_VERIFICADO',
   'FUNCION_PREMIUM',
   'COMPRA_NO_PERMITIDA',
   'ARCHIVO_NO_PERMITIDO',
@@ -86,6 +89,9 @@ function _reaccionar(error: ApiError, req: HttpRequest<unknown>, injector: Injec
       break;
     case 'AUTORIZACION_PENDIENTE':
       void router.navigate(['/pendiente-autorizacion']);
+      break;
+    case 'CORREO_NO_VERIFICADO':
+      void router.navigate(['/verifica-tu-correo']);
       break;
     case 'POLITICA_DESACTUALIZADA':
       // Sin sesión (registro, acudiente) la propia pantalla recarga la política.

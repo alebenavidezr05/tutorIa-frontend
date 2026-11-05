@@ -28,6 +28,13 @@
     </div>
   </div>
 
+  @if (sinRespuesta()) {
+    <div class="alerta alerta--aviso" role="status">
+      <app-icono class="alerta__icono" nombre="info" />
+      <p class="alerta__cuerpo">{{ textos.sinRespuesta }}</p>
+    </div>
+  }
+
   @if (errorReenvio(); as mensajeError) {
     <div class="alerta alerta--error" role="alert">
       <app-icono class="alerta__icono" nombre="alerta" />
@@ -75,7 +82,7 @@
     }
   </div>
   @if (espera() > 0) {
-    <p id="pendiente-espera" class="cuenta">{{ textoEspera() }}</p>
+    <p id="pendiente-espera" class="cuenta-regresiva">{{ textoEspera() }}</p>
   }
 
   <div id="pendiente-otro-correo">

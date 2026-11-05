@@ -90,8 +90,48 @@ export const TEXTOS_PENDIENTE = {
   enviarNuevo: 'Enviar a este correo',
   reenviado: 'Listo, el correo se envió de nuevo.',
   demasiadas: 'Ya se enviaron varios correos. Espera un momento antes de intentarlo otra vez.',
-  sigue:
-    'Tu cuenta sigue pendiente de autorización. Si el adulto ya confirmó, espera un momento e intenta de nuevo.',
-  activa: '¡Tu cuenta ya está autorizada! Ya puedes usar TutorIA.',
+  sinRespuesta: 'Aún no hay respuesta de tu adulto responsable. Te avisamos aquí apenas la dé.',
+  activa: '¡Listo, tu adulto responsable te autorizó!',
   cerrarSesion: 'Cerrar sesión',
+} as const;
+
+export const TEXTOS_VERIFICA_CORREO = {
+  titulo: 'Confirma tu correo para empezar',
+  cargando: 'Revisando tu correo…',
+  enviado: (correo: string) =>
+    `Te enviamos un mensaje a ${correo}. Ábrelo y pulsa «Confirmar mi correo».`,
+  neutro: 'No pudimos completar esto. Intenta de nuevo en unos minutos.',
+  reintentar: 'Reintentar',
+  revisar: 'Ya lo confirmé, revisar',
+  reenviar: 'Reenviar correo',
+  podrasReenviar: (tiempo: string) => `Podrás pedir otro en ${tiempo}`,
+  reenviado: 'Listo, te enviamos otro correo.',
+  demasiadas: 'Ya pediste varios correos. Espera un momento antes de pedir otro.',
+  spam: '¿No lo ves? Revisa la carpeta de spam.',
+  sinConfirmar: 'Todavía no vemos la confirmación. Abre el mensaje y pulsa el botón del correo.',
+  confirmado: '¡Listo! Confirmamos tu correo.',
+  cerrarSesion: 'Cerrar sesión',
+  pasos: 'Pasos para activar tu cuenta',
+  pasoCorreo: 'Confirmar tu correo',
+  pasoAutorizacion: 'Autorización de tu adulto responsable',
+  pasoActual: 'Ahora',
+  estadoAutorizacion: {
+    SIN_SOLICITUD: 'Sin enviar',
+    PENDIENTE: 'Esperando respuesta',
+    AUTORIZADA: 'Autorizada',
+    RECHAZADA: 'No autorizada',
+    REVOCADA: 'Retirada',
+    EXPIRADA: 'Enlace vencido',
+  } as Partial<Record<string, string>>,
+} as const;
+
+export const TEXTOS_VERIFICAR_ENLACE = {
+  titulo: 'Confirmación de correo',
+  cargando: 'Confirmando tu correo…',
+  listo: '¡Listo! Confirmamos tu correo.',
+  continuar: 'Continuar',
+  ingresar: 'Ingresar',
+  invalido: 'Este enlace ya no es válido. Ingresa a TutorIA y pide uno nuevo.',
+  neutro: 'No pudimos completar esto. Intenta de nuevo en unos minutos.',
+  reintentar: 'Reintentar',
 } as const;

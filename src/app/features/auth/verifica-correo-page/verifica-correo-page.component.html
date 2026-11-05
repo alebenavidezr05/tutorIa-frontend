@@ -1,0 +1,88 @@
+<div class="verifica__cabecera">
+  <app-vex [estado]="cargando() || revisando() ? 'pensando' : 'escuchando'" tamano="md" />
+  <h1>{{ textos.titulo }}</h1>
+</div>
+
+@if (cargando() && !estado()) {
+  <p role="status">{{ textos.cargando }}</p>
+} @else if (error()) {
+  <div class="alerta alerta--error" role="alert">
+    <app-icono class="alerta__icono" nombre="alerta" />
+    <div class="alerta__cuerpo">
+      <p>{{ textos.neutro }}</p>
+      <button
+        app-boton
+        type="button"
+        variante="secundario"
+        [disabled]="cargando()"
+        (click)="cargar()"
+      >
+        {{ textos.reintentar }}
+      </button>
+    </div>
+  </div>
+} @else if (estado(); as e) {
+  <p>{{ textos.enviado(e.correo_enmascarado) }}</p>
+  <p class="texto-suave">{{ textos.spam }}</p>
+
+  @if (esMenor()) {
+    <ol class="verifica__pasos" [attr.aria-label]="textos.pasos">
+      <li class="verifica__paso--actual">
+        {{ textos.pasoCorreo }} <span class="visualmente-oculto">({{ textos.pasoActual }})</span>
+      </li>
+      <li>
+        {{ textos.pasoAutorizacion }}
+        @if (estadoAutorizacion(); as texto) {
+          · {{ texto }}
+        }
+      </li>
+    </ol>
+  }
+
+  @if (sinConfirmar()) {
+    <div class="alerta alerta--aviso" role="status">
+      <app-icono class="alerta__icono" nombre="info" />
+      <p class="alerta__cuerpo">{{ textos.sinConfirmar }}</p>
+    </div>
+  }
+
+  @if (errorReenvio(); as mensajeError) {
+    <div class="alerta alerta--error" role="alert">
+      <app-icono class="alerta__icono" nombre="alerta" />
+      <p class="alerta__cuerpo">{{ mensajeError }}</p>
+    </div>
+  }
+
+  <div class="acciones">
+    <button
+      app-boton
+      type="button"
+      variante="acento"
+      [cargando]="revisando()"
+      [disabled]="revisando()"
+      (click)="revisar()"
+    >
+      {{ textos.revisar }}
+    </button>
+    <button
+      app-boton
+      type="button"
+      variante="secundario"
+      [cargando]="reenviando()"
+      [disabled]="espera() > 0 || reenviando()"
+      [attr.aria-describedby]="espera() > 0 ? 'verifica-espera' : null"
+      (click)="reenviar()"
+    >
+      {{ textos.reenviar }}
+    </button>
+  </div>
+  @if (espera() > 0) {
+    <p id="verifica-espera" class="cuenta-regresiva">{{ textoEspera() }}</p>
+  }
+}
+
+<div class="acciones">
+  <button app-boton type="button" variante="texto" [disabled]="cerrando()" (click)="cerrarSesion()">
+    {{ textos.cerrarSesion }}
+  </button>
+</div>

@@ -9,7 +9,21 @@ export interface UsuarioPublico {
   nivel_educativo: string;
   estado_cuenta: EstadoCuenta;
   es_menor: boolean;
+  /** Mientras sea `false`, el backend responde 403 CORREO_NO_VERIFICADO en las rutas de uso. */
+  correo_verificado: boolean;
   fecha_registro: FechaIso;
+}
+
+/** `GET /auth/verificar-correo/estado` */
+export interface EstadoVerificacionCorreo {
+  correo_verificado: boolean;
+  correo_enmascarado: string;
+  puede_reenviar_en_segundos: number;
+}
+
+/** `POST /auth/verificar-correo`. Solo `VERIFICADO` cuenta como éxito. */
+export interface VerificacionCorreoRespuesta {
+  estado: 'VERIFICADO' | string;
 }
 
 export interface RegistroEntrada {
