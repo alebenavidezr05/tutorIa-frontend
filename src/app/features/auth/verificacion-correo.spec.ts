@@ -1,9 +1,15 @@
 import { Location } from '@angular/common';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { cuerpoError, usuarioPrueba } from '../../../testing/datos-prueba';
 import { API, proveedoresHttpPrueba } from '../../../testing/proveedores-prueba';
+import { cuentaActivaGuard } from '../../core/auth/auth.guard';
 import { SesionService } from '../../core/auth/sesion.service';
 import { EstadoVerificacionCorreo, UsuarioPublico } from '../../core/models';
 import { NotificacionService } from '../../core/notificaciones/notificacion.service';
@@ -124,12 +130,25 @@ describe('VerificaCorreoPageComponent (/verifica-tu-correo)', () => {
     expect(boton('Reenviar correo')?.disabled).toBe(true);
   });
 
-  it('«Ya lo confirmé, revisar» con el correo confirmado va al destino', async () => {
+  /** Lo que decide el guard de /tema con la sesión que quedó en memoria. */
+  async function guardDelDestino(): Promise<unknown> {
+    return TestBed.runInInjectionContext(() =>
+      cuentaActivaGuard({} as ActivatedRouteSnapshot, { url: '/tema' } as RouterStateSnapshot),
+    );
+  }
+
+  it('«Ya lo confirmé, revisar» confirmado: refresca la sesión, navega y el guard lo deja pasar', async () => {
     await abrir();
     boton('Ya lo confirmé, revisar')?.click();
-    backend.expectOne(`${API}/auth/me`).flush(usuarioPrueba());
+    backend.expectOne(ESTADO_URL).flush(estado({ correo_verificado: true }));
+    // Antes de navegar se refresca el usuario de la sesión.
+    expect(navegar).not.toHaveBeenCalled();
+    backend.expectOne(`${API}/auth/me`).flush(usuarioPrueba({ correo_verificado: true }));
     await fixture.whenStable();
     expect(navegar).toHaveBeenCalledExactlyOnceWith('/tema');
+    expect(TestBed.inject(SesionService).usuario()?.correo_verificado).toBe(true);
+    // Antes del arreglo el guard leía el usuario viejo y devolvía a /verifica-tu-correo.
+    expect(await guardDelDestino()).toBe(true);
   });
 
   it('un menor con el correo confirmado sigue a la autorización', async () => {
@@ -154,6 +173,7 @@ describe('VerificaCorreoPageComponent (/verifica-tu-correo)', () => {
     ]);
 
     boton('Ya lo confirmé, revisar')?.click();
+    backend.expectOne(ESTADO_URL).flush(estado({ correo_verificado: true }));
     backend.expectOne(`${API}/auth/me`).flush(usuarioPrueba(menor));
     await fixture.whenStable();
     expect(navegar).toHaveBeenCalledExactlyOnceWith('/pendiente-autorizacion');
@@ -162,10 +182,14 @@ describe('VerificaCorreoPageComponent (/verifica-tu-correo)', () => {
   it('«Ya lo confirmé, revisar» sin confirmar se queda y lo explica', async () => {
     await abrir();
     boton('Ya lo confirmé, revisar')?.click();
-    backend.expectOne(`${API}/auth/me`).flush(SIN_VERIFICAR);
+    backend.expectOne(ESTADO_URL).flush(estado({ correo_verificado: false }));
     await fixture.whenStable();
+    backend.expectNone(`${API}/auth/me`);
     expect(navegar).not.toHaveBeenCalled();
-    expect(el.textContent).toContain('Todavía no vemos la confirmación');
+    expect(el.textContent).toContain(
+      'Todavía no vemos tu correo confirmado. Revisa el mensaje y pulsa el botón.',
+    );
+    expect(await guardDelDestino()).toEqual(TestBed.inject(Router).parseUrl('/verifica-tu-correo'));
   });
 
   it('si el estado ya dice verificado, avanza sin esperar el clic', async () => {
@@ -206,17 +230,21 @@ describe('VerificaCorreoPageComponent (/verifica-tu-correo)', () => {
   it('la revisión automática cada 15 s redirige una sola vez y luego se detiene', async () => {
     await abrir();
     await avanzar(INTERVALO_REVISION_MS);
-    backend.expectOne(`${API}/auth/me`).flush(SIN_VERIFICAR);
+    backend.expectOne(ESTADO_URL).flush(estado());
     await fixture.whenStable();
+    backend.expectNone(`${API}/auth/me`);
     expect(navegar).not.toHaveBeenCalled();
     // La revisión automática no muestra el aviso: solo el clic lo hace.
     expect(el.textContent).not.toContain('Todavía no vemos');
 
     await avanzar(INTERVALO_REVISION_MS);
     boton('Ya lo confirmé, revisar')?.click(); // coincide con la revisión automática
+    backend.expectOne(ESTADO_URL).flush(estado({ correo_verificado: true }));
+    await avanzar(INTERVALO_REVISION_MS); // otro ciclo mientras se refresca la sesión
     backend.expectOne(`${API}/auth/me`).flush(usuarioPrueba());
     await fixture.whenStable();
     await avanzar(INTERVALO_REVISION_MS * 3);
+    backend.expectNone(ESTADO_URL);
     backend.expectNone(`${API}/auth/me`);
     expect(navegar).toHaveBeenCalledExactlyOnceWith('/tema');
   });
@@ -225,11 +253,11 @@ describe('VerificaCorreoPageComponent (/verifica-tu-correo)', () => {
     const visibilidad = vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden');
     await abrir();
     await avanzar(INTERVALO_REVISION_MS * 2);
-    backend.expectNone(`${API}/auth/me`);
+    backend.expectNone(ESTADO_URL);
     visibilidad.mockReturnValue('visible');
     fixture.destroy();
     vi.advanceTimersByTime(INTERVALO_REVISION_MS * 2);
-    backend.expectNone(`${API}/auth/me`);
+    backend.expectNone(ESTADO_URL);
   });
 });
 

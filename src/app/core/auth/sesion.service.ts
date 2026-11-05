@@ -23,9 +23,12 @@ export class SesionService {
     return usuario?.estado_cuenta === 'ACTIVA' && usuario.correo_verificado !== false;
   });
 
-  /** Consulta `/auth/me`. Si no hay sesión deja `null` sin notificar. */
+  /**
+   * Consulta `/auth/me`. Si no hay sesión deja `null` sin notificar. También reemplaza lo que
+   * leen los guards (`asegurarRestaurada`), para que no decidan con un usuario viejo.
+   */
   restaurar(): Promise<UsuarioPublico | null> {
-    return new Promise((resolver) => {
+    const promesa = new Promise<UsuarioPublico | null>((resolver) => {
       this.authApi.obtenerActual({ silencioso: true }).subscribe({
         next: (usuario) => {
           this._usuario.set(usuario);
@@ -37,12 +40,13 @@ export class SesionService {
         },
       });
     });
+    this.restauracionInicial = promesa;
+    return promesa;
   }
 
   /** Restaura la sesión una sola vez al cargar la app (lo usan los guards). */
   asegurarRestaurada(): Promise<UsuarioPublico | null> {
-    this.restauracionInicial ??= this.restaurar();
-    return this.restauracionInicial;
+    return this.restauracionInicial ?? this.restaurar();
   }
 
   establecer(usuario: UsuarioPublico): void {

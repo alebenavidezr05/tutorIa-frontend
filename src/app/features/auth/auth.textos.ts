@@ -108,7 +108,7 @@ export const TEXTOS_VERIFICA_CORREO = {
   reenviado: 'Listo, te enviamos otro correo.',
   demasiadas: 'Ya pediste varios correos. Espera un momento antes de pedir otro.',
   spam: '¿No lo ves? Revisa la carpeta de spam.',
-  sinConfirmar: 'Todavía no vemos la confirmación. Abre el mensaje y pulsa el botón del correo.',
+  sinConfirmar: 'Todavía no vemos tu correo confirmado. Revisa el mensaje y pulsa el botón.',
   confirmado: '¡Listo! Confirmamos tu correo.',
   cerrarSesion: 'Cerrar sesión',
   pasos: 'Pasos para activar tu cuenta',

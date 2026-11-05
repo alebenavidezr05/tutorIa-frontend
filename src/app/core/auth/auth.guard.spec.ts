@@ -1,7 +1,8 @@
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { usuarioPrueba } from '../../../testing/datos-prueba';
-import { proveedoresHttpPrueba } from '../../../testing/proveedores-prueba';
+import { API, proveedoresHttpPrueba } from '../../../testing/proveedores-prueba';
 import { UsuarioPublico } from '../models';
 import {
   RUTA_PENDIENTE,
@@ -99,6 +100,19 @@ describe('guards', () => {
       expect(url(await ejecutar(cuentaActivaGuard))).toBe('/pendiente-autorizacion');
       con(usuarioPrueba({ es_menor: true }));
       expect(await ejecutar(cuentaActivaGuard)).toBe(true);
+    });
+  });
+
+  describe('SesionService.restaurar', () => {
+    it('actualiza también lo que leen los guards (sin usuario viejo en caché)', async () => {
+      const backend = TestBed.inject(HttpTestingController);
+      sesion.establecer(usuarioPrueba({ correo_verificado: false }));
+      const refresco = sesion.restaurar();
+      backend.expectOne(`${API}/auth/me`).flush(usuarioPrueba({ correo_verificado: true }));
+      await refresco;
+      expect((await sesion.asegurarRestaurada())?.correo_verificado).toBe(true);
+      expect(await ejecutar(cuentaActivaGuard)).toBe(true);
+      backend.verify();
     });
   });
 

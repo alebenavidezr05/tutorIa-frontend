@@ -137,7 +137,7 @@ export class VerificaCorreoPageComponent implements OnInit {
       .subscribe({
         next: (estado) => {
           if (estado.correo_verificado) {
-            this.revisar(false);
+            this.avanzar(false);
             return;
           }
           this.estado.set(estado);
@@ -147,15 +147,45 @@ export class VerificaCorreoPageComponent implements OnInit {
       });
   }
 
-  /** Restaura la sesión y va al siguiente paso si el correo ya está confirmado. */
+  /**
+   * Botón «Ya lo confirmé, revisar» y sondeo automático: consulta el estado y, si el correo ya está
+   * confirmado, refresca la sesión antes de navegar. Si no, solo el clic muestra el aviso.
+   */
   protected revisar(manual = true): void {
     if (this.revisando() || this.navegando) {
       return;
     }
-    this.revisando.set(true);
     if (manual) {
       this.sinConfirmar.set(false);
     }
+    // Sigue «revisando» hasta terminar de refrescar la sesión: el sondeo no se cruza con el clic.
+    this.revisando.set(true);
+    this.authApi.estadoVerificacion().subscribe({
+      next: (estado) => {
+        if (estado.correo_verificado) {
+          this.avanzar(manual);
+          return;
+        }
+        this.revisando.set(false);
+        if (manual) {
+          this.sinConfirmar.set(true);
+        }
+      },
+      error: () => {
+        this.revisando.set(false);
+        if (manual) {
+          this.errorReenvio.set(this.textos.neutro);
+        }
+      },
+    });
+  }
+
+  /** Refresca el usuario de la sesión (GET /auth/me) y navega con `siguientePaso`. */
+  private avanzar(manual: boolean): void {
+    if (this.navegando) {
+      return;
+    }
+    this.revisando.set(true);
     void this.sesion.restaurar().then((usuario) => {
       this.revisando.set(false);
       if (this.navegando) {
@@ -207,7 +237,7 @@ export class VerificaCorreoPageComponent implements OnInit {
       this.cuenta.iniciar(error.reintentarEnSegundos ?? ESPERA_POR_DEFECTO);
       this.errorReenvio.set(this.textos.demasiadas);
     } else if (tieneCodigo(error, 'CORREO_YA_VERIFICADO')) {
-      this.revisar(false);
+      this.avanzar(false);
     } else {
       this.errorReenvio.set(this.textos.neutro);
     }

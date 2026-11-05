@@ -1,8 +1,9 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { cuerpoError, usuarioPrueba } from '../../../../testing/datos-prueba';
 import { API, proveedoresHttpPrueba } from '../../../../testing/proveedores-prueba';
+import { cuentaActivaGuard } from '../../../core/auth/auth.guard';
 import { SesionService } from '../../../core/auth/sesion.service';
 import { MiAutorizacion } from '../../../core/models';
 import { NotificacionService } from '../../../core/notificaciones/notificacion.service';
@@ -188,6 +189,11 @@ describe('PendienteAutorizacionPageComponent', () => {
     await fixture.whenStable();
     expect(navegar).toHaveBeenCalledExactlyOnceWith('/tema');
     expect(el.textContent).not.toContain('Aún no hay respuesta');
+    // El guard de /tema ve el usuario refrescado, no el de la carga inicial.
+    const guard = await TestBed.runInInjectionContext(() =>
+      cuentaActivaGuard({} as ActivatedRouteSnapshot, { url: '/tema' } as RouterStateSnapshot),
+    );
+    expect(guard).toBe(true);
   });
 
   it('«Ya lo autorizó, revisar» sin respuesta se queda y muestra el aviso (solo entonces)', async () => {
