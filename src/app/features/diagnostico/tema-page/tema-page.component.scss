@@ -1,8 +1,21 @@
 @use 'mixins' as *;
 
+/* Móvil: cabecera, «¿Cómo funciona?» plegado y formulario. Escritorio: formulario y explicación en una fila. */
 .tema {
-  max-width: 720px;
-  margin: var(--espacio-seccion) auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-4);
+  max-width: 1120px;
+  margin: clamp(var(--espacio-4), 4vh, var(--espacio-7)) auto 0;
+
+  @include desde(md) {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-areas:
+      'cabecera cabecera'
+      'formulario como';
+    align-items: start;
+    column-gap: var(--espacio-5);
+  }
 }
 
 .tema__cabecera {
@@ -10,13 +23,16 @@
   flex-direction: column;
   align-items: center;
   gap: var(--espacio-3);
-  margin-bottom: var(--espacio-5);
   text-align: center;
 
   @include desde(sm) {
     flex-direction: row;
     gap: var(--espacio-5);
     text-align: left;
+  }
+
+  @include desde(md) {
+    grid-area: cabecera;
   }
 }
 
@@ -29,6 +45,12 @@
 
 .tema__titulo {
   margin: 0;
+}
+
+.tema__formulario {
+  @include desde(md) {
+    grid-area: formulario;
+  }
 }
 
 .tema__campo {
@@ -70,8 +92,110 @@
   }
 }
 
-.tema__lema-secundario {
-  margin-top: var(--espacio-5);
-  text-align: center;
-  color: var(--color-texto-suave);
+/* Bloque compacto y amable: tres pasos, tres niveles y una nota. */
+.como {
+  padding: var(--espacio-1) var(--espacio-4);
+  border-radius: var(--radio-xl);
+  background: var(--color-panel-suave);
+  font-size: var(--texto-sm);
+  line-height: 1.45;
+
+  @include desde(md) {
+    grid-area: como;
+    padding: var(--espacio-5);
+  }
+}
+
+/* En móvil el título es el botón que pliega; en escritorio, un título fijo. */
+.como__titulo {
+  display: none;
+  margin-bottom: var(--espacio-3);
+  font-size: var(--texto-md);
+
+  @include desde(md) {
+    display: block;
+  }
+}
+
+.como__alternar {
+  @include objetivo-tactil;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-texto);
+  font-weight: 800;
+  cursor: pointer;
+
+  @include desde(md) {
+    display: none;
+  }
+}
+
+.como__flecha {
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: transform var(--duracion-transicion);
+}
+
+.como__flecha--abierta {
+  transform: rotate(90deg);
+}
+
+.como__contenido {
+  padding-block: var(--espacio-2) var(--espacio-3);
+
+  @include desde(md) {
+    padding: 0;
+  }
+}
+
+.como__contenido--cerrado {
+  display: none;
+
+  @include desde(md) {
+    display: block;
+  }
+}
+
+.como__pasos {
+  display: grid;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-4);
+}
+
+.como__paso {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.como__icono {
+  flex: none;
+  display: inline-flex;
+  padding: 7px;
+  border-radius: 50%;
+  background: var(--color-acento-suave);
+}
+
+.como__subtitulo {
+  margin-bottom: var(--espacio-2);
+  font-family: var(--fuente-cuerpo);
+  font-size: var(--texto-sm);
+  font-weight: 800;
+}
+
+.como__niveles {
+  display: grid;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-3);
+}
+
+.como__nota {
+  margin: 0;
+  font-weight: 700;
 }

@@ -154,14 +154,68 @@ describe('ConfirmarAutorizacionPageComponent', () => {
     expect(el.textContent).toContain('Retiraste la autorización');
   });
 
-  it.each(['REVOCADA', 'EXPIRADA'] as const)(
-    '%s muestra que el enlace ya no es válido, sin formulario',
-    async (estado) => {
-      const { el } = await abrir(autorizacion(estado));
-      expect(el.textContent).toContain(INVALIDO);
-      expect(el.querySelector('a[href="/autorizacion"], form')).toBeNull();
-    },
-  );
+  /** JSON tal cual lo devuelve el backend (enum `EstadoAutorizacion`, con `permite_compras`). */
+  function respuestaBackend(estado: string): Record<string, unknown> {
+    return {
+      estado,
+      nombre_estudiante: 'Daniela',
+      correo_estudiante_enmascarado: 'd***@dominio.co',
+      texto_consentimiento: 'Como representante legal autorizo el tratamiento de sus datos.',
+      version_politica: '1',
+      permite_compras: false,
+      fecha_expiracion_token: '2026-11-08T03:24:14Z',
+    };
+  }
+
+  async function abrirCruda(cuerpo: Record<string, unknown>) {
+    const fixture = await crear(`token=${TOKEN}`);
+    backend.expectOne(`${API}/autorizaciones/consultar`).flush(cuerpo);
+    await fixture.whenStable();
+    return { fixture, el: fixture.nativeElement as HTMLElement };
+  }
+
+  it.each([
+    ['PENDIENTE_VERIFICACION', 'Daniela necesita tu autorización'],
+    ['AUTORIZADA', '¡Listo! Daniela ya puede usar TutorIA'],
+    ['RECHAZADA', 'Entendido. No activaremos la cuenta.'],
+    ['REVOCADA', 'La autorización de Daniela fue retirada'],
+    ['VENCIDA', 'Este enlace venció'],
+  ])('estado real del backend %s muestra su pantalla', async (estado, texto) => {
+    const { el } = await abrirCruda(respuestaBackend(estado));
+    expect(el.textContent).toContain(texto);
+    expect(el.textContent).not.toContain(INVALIDO);
+  });
+
+  it('PENDIENTE_VERIFICACION ofrece los dos botones y confirma con la versión', async () => {
+    const { el } = await abrirCruda(respuestaBackend('PENDIENTE_VERIFICACION'));
+    boton(el, 'Autorizo').click();
+    const req = backend.expectOne(`${API}/autorizaciones/confirmar`);
+    expect(req.request.body).toEqual({ token: TOKEN, version_politica: '1' });
+    req.flush(respuestaBackend('AUTORIZADA'));
+  });
+
+  it('un estado desconocido muestra un mensaje neutro y reintenta con el mismo token', async () => {
+    const { fixture, el } = await abrirCruda(respuestaBackend('EN_REVISION'));
+    expect(el.textContent).toContain(
+      'No pudimos mostrar esta autorización. Intenta de nuevo en unos minutos.',
+    );
+    expect(el.textContent).not.toContain(INVALIDO);
+    boton(el, 'Reintentar').click();
+    const req = backend.expectOne(`${API}/autorizaciones/consultar`);
+    expect(req.request.body).toEqual({ token: TOKEN });
+    req.flush(respuestaBackend('PENDIENTE_VERIFICACION'));
+    await fixture.whenStable();
+    expect(el.textContent).toContain('Daniela necesita tu autorización');
+  });
+
+  it('un error distinto de 404 AUTORIZACION_INVALIDA no dice que el enlace es inválido', async () => {
+    const fixture = await crear(`token=${TOKEN}`);
+    backend
+      .expectOne(`${API}/autorizaciones/consultar`)
+      .flush(cuerpoError('ERROR_INTERNO'), { status: 500, statusText: '' });
+    await fixture.whenStable();
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain(INVALIDO);
+  });
 
   it('AUTORIZACION_INVALIDA muestra el mensaje amable sin formulario', async () => {
     const fixture = await crear(`token=${TOKEN}`);

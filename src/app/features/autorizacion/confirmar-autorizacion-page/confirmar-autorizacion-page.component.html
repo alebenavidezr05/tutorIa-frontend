@@ -20,6 +20,16 @@
       {{ textos.reintentar }}
     </button>
   }
+  @case ('desconocida') {
+    <h1>{{ textos.titulo }}</h1>
+    <div class="alerta alerta--aviso" role="status">
+      <app-icono class="alerta__icono" nombre="info" />
+      <p class="alerta__cuerpo">{{ textos.desconocido }}</p>
+    </div>
+    <button app-boton type="button" variante="primario" (click)="consultar()">
+      {{ textos.reintentar }}
+    </button>
+  }
   @case ('pendiente') {
     @if (datos(); as d) {
       <h1 class="adulto__titulo">{{ textos.necesita(d.nombre_estudiante) }}</h1>
@@ -88,6 +98,22 @@
     <div class="alerta alerta--aviso" role="status">
       <app-icono class="alerta__icono" nombre="info" />
       <p class="alerta__cuerpo">{{ textos.rechazada }}</p>
+    </div>
+  }
+  @case ('revocada') {
+    @if (datos(); as d) {
+      <h1>{{ textos.titulo }}</h1>
+      <div class="alerta alerta--aviso" role="status">
+        <app-icono class="alerta__icono" nombre="info" />
+        <p class="alerta__cuerpo">{{ textos.revocada(d.nombre_estudiante) }}</p>
+      </div>
+    }
+  }
+  @case ('expirada') {
+    <h1>{{ textos.titulo }}</h1>
+    <div class="alerta alerta--aviso" role="status">
+      <app-icono class="alerta__icono" nombre="info" />
+      <p class="alerta__cuerpo">{{ textos.expirada }}</p>
     </div>
   }
   @case ('retirada') {

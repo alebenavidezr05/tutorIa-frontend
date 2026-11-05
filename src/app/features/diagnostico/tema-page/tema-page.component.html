@@ -7,12 +7,45 @@
     </div>
   </header>
 
-  <app-tarjeta [elevada]="true">
+  <!-- Cómo funciona: en escritorio, junto al campo; en móvil, plegable para no estorbar. -->
+  <aside class="como" aria-labelledby="tema-como-titulo">
+    <h2 id="tema-como-titulo" class="como__titulo">{{ como.titulo }}</h2>
+    <button
+      type="button"
+      class="como__alternar"
+      aria-controls="tema-como"
+      [attr.aria-expanded]="comoAbierto()"
+      (click)="comoAbierto.set(!comoAbierto())"
+    >
+      <span>{{ como.titulo }}</span>
+      <span class="como__flecha" [class.como__flecha--abierta]="comoAbierto()" aria-hidden="true"
+        >›</span
+      >
+    </button>
+    <div id="tema-como" class="como__contenido" [class.como__contenido--cerrado]="!comoAbierto()">
+      <ol class="lista-limpia como__pasos">
+        @for (paso of como.pasos; track paso.texto) {
+          <li class="como__paso">
+            <span class="como__icono"><app-icono [nombre]="paso.icono" [tamano]="18" /></span>
+            <span>{{ paso.texto }}</span>
+          </li>
+        }
+      </ol>
+      <h3 class="como__subtitulo">{{ como.nivelesTitulo }}</h3>
+      <ul class="lista-limpia como__niveles">
+        @for (nivel of niveles; track nivel) {
+          <li><app-insignia-nivel [nivel]="nivel" [conDescripcion]="true" /></li>
+        }
+      </ul>
+      <p class="como__nota">{{ como.noEsExamen }}</p>
+    </div>
+  </aside>
+
+  <app-tarjeta class="tema__formulario" [elevada]="true">
     <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
       <app-campo-formulario
         [etiqueta]="textos.etiqueta"
         idCampo="tema-texto"
-        [ayuda]="textos.ayuda"
         [control]="form.controls.tema"
       >
         <textarea
@@ -55,6 +88,4 @@
       </button>
     </form>
   </app-tarjeta>
-
-  <p class="tema__lema-secundario">{{ textos.lemaSecundario }}</p>
 </section>

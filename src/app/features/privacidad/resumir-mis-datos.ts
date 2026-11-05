@@ -66,7 +66,7 @@ export function resumirMisDatos(datos: MisDatos): ResumenMisDatos {
     contenido: [
       { etiqueta: 'Planes de estudio', valor: _cantidad(datos.planes.length, 'plan', 'planes') },
       {
-        etiqueta: 'Conversaciones con el tutor',
+        etiqueta: 'Conversaciones con Vex',
         valor: _cantidad(datos.conversaciones.length, 'conversación', 'conversaciones'),
       },
       {

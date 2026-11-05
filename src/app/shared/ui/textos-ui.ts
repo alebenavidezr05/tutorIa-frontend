@@ -23,7 +23,7 @@ export const TEXTO_PREMIUM = {
   incluye: [
     'Historial completo de tus planes',
     'Reporte de progreso descargable',
-    'Varios temas a la vez con el tutor',
+    'Varios temas a la vez con Vex',
     'Más mensajes, ilustraciones y archivos por día',
   ],
 } as const;

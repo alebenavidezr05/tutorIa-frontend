@@ -37,16 +37,23 @@ import { estadoControl } from '../campo-formulario/estado-control';
     }
   `,
   styles: `
+    /* El contenedor puede compactarla con --casilla-* (por ejemplo, el registro en escritorio). */
     :host {
       display: block;
-      margin-bottom: var(--espacio-4);
+      margin-bottom: var(--casilla-separacion, var(--espacio-4));
+      font-size: var(--casilla-texto, inherit);
+      line-height: var(--casilla-interlineado, inherit);
+    }
+
+    input {
+      margin-block: var(--casilla-margen, 10px);
     }
 
     .casilla {
       display: flex;
       align-items: flex-start;
       gap: var(--espacio-1);
-      padding: var(--espacio-1);
+      padding: var(--casilla-borde-relleno, var(--espacio-1));
       border-radius: var(--radio-md);
       border: 2px solid transparent;
     }
@@ -56,7 +63,7 @@ import { estadoControl } from '../campo-formulario/estado-control';
     }
 
     .casilla__texto {
-      padding-block: 10px;
+      padding-block: var(--casilla-relleno, 10px);
       cursor: pointer;
     }
 
@@ -68,7 +75,7 @@ import { estadoControl } from '../campo-formulario/estado-control';
 
     .casilla__detalle {
       padding-left: 48px;
-      font-size: var(--texto-sm);
+      font-size: var(--casilla-texto, var(--texto-sm));
       color: var(--color-texto-suave);
     }
 

@@ -1,11 +1,9 @@
-import { LEMA_SECUNDARIO } from '../../layout/textos-layout';
+import { PASOS_COMO_FUNCIONA } from '../../layout/textos-layout';
 
 export const TEXTOS_TEMA = {
   titulo: '¿Qué te gustaría aprender hoy?',
   saludo: (nombre: string) => (nombre ? `¡Hola, ${nombre}!` : '¡Hola!'),
-  lemaSecundario: LEMA_SECUNDARIO,
   etiqueta: 'Escribe un tema de estudio',
-  ayuda: 'Te haremos un diagnóstico corto (3 a 5 preguntas) para armar un plan a tu medida.',
   ejemplosTitulo: 'Ideas para empezar:',
   ejemplos: [
     'Fracciones equivalentes',
@@ -16,6 +14,14 @@ export const TEXTOS_TEMA = {
   ],
   boton: 'Empezar el diagnóstico',
   creando: 'Preparando tu diagnóstico…',
+} as const;
+
+/** Bloque «¿Cómo funciona?» de /tema. Los niveles usan las descripciones de `NIVELES`. */
+export const TEXTOS_COMO_FUNCIONA = {
+  titulo: '¿Cómo funciona?',
+  pasos: PASOS_COMO_FUNCIONA,
+  nivelesTitulo: 'Niveles del diagnóstico',
+  noEsExamen: 'No es un examen: Vex solo necesita saber dónde estás para armar tu plan.',
 } as const;
 
 export const TEXTOS_CUESTIONARIO = {
@@ -43,7 +49,7 @@ export const TEXTOS_RESULTADO = {
   fuente: 'Fuente',
   generar: 'Generar mi plan',
   generando: 'Estoy pensando en tu plan…',
-  noEncontrado: 'No encontramos este resultado',
+  noEncontrado: 'Este resultado no está disponible',
   noEncontradoTexto:
     'Puede que hayas recargado la página. Tus planes guardados están en el historial.',
   historial: 'Ir al historial',

@@ -161,7 +161,7 @@ export const routes: Routes = [
           },
           {
             path: 'tutor',
-            title: 'Tutor',
+            title: 'Chat con Vex',
             loadComponent: () =>
               import('./features/tutor/tutor-page/tutor-page.component').then(
                 (m) => m.TutorPageComponent,
@@ -169,7 +169,7 @@ export const routes: Routes = [
           },
           {
             path: 'tutor/:idConversacion',
-            title: 'Chat con el tutor',
+            title: 'Chat con Vex',
             loadComponent: () =>
               import('./features/tutor/chat-page/chat-page.component').then(
                 (m) => m.ChatPageComponent,

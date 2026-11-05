@@ -38,7 +38,7 @@ describe('PlanPageComponent', () => {
 
   it('si validado es false muestra el aviso discreto', async () => {
     await crear(planPrueba({ validado: false }));
-    expect(el.textContent).toContain('Este plan no pasó toda nuestra verificación');
+    expect(el.textContent).toContain('Este plan no pasó toda la verificación de TutorIA');
   });
 
   it('guarda la respuesta al salir del campo e indica "Guardado"', async () => {

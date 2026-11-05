@@ -24,9 +24,16 @@ export type VistaConfirmacion =
   | { tipo: 'cargando' }
   | { tipo: 'invalida' }
   | { tipo: 'error' }
-  | { tipo: 'pendiente' | 'autorizada' | 'rechazada' | 'retirada'; datos: AutorizacionPublica };
+  | { tipo: 'desconocida' }
+  | {
+      tipo: 'pendiente' | 'autorizada' | 'rechazada' | 'retirada' | 'revocada' | 'expirada';
+      datos: AutorizacionPublica;
+    };
 
-/** Estado del backend → pantalla. REVOCADA, EXPIRADA o sin solicitud: el enlace ya no sirve. */
+/**
+ * Estado (ya normalizado por el servicio) → pantalla. «Enlace no válido» queda solo para el 404
+ * AUTORIZACION_INVALIDA o la falta de token; un estado desconocido muestra un mensaje neutro.
+ */
 function _vistaDe(datos: AutorizacionPublica): VistaConfirmacion {
   switch (datos.estado) {
     case 'PENDIENTE':
@@ -35,8 +42,12 @@ function _vistaDe(datos: AutorizacionPublica): VistaConfirmacion {
       return { tipo: 'autorizada', datos };
     case 'RECHAZADA':
       return { tipo: 'rechazada', datos };
+    case 'REVOCADA':
+      return { tipo: 'revocada', datos };
+    case 'EXPIRADA':
+      return { tipo: 'expirada', datos };
     default:
-      return { tipo: 'invalida' };
+      return { tipo: 'desconocida' };
   }
 }
 
@@ -151,7 +162,7 @@ export class ConfirmarAutorizacionPageComponent implements OnInit {
       this.avisoPolitica.set(true);
       return;
     }
-    const invalida = tieneCodigo(error, 'AUTORIZACION_INVALIDA') || error.status === 410;
+    const invalida = error.status === 404 && tieneCodigo(error, 'AUTORIZACION_INVALIDA');
     this.vista.set({ tipo: invalida ? 'invalida' : 'error' });
   }
 }

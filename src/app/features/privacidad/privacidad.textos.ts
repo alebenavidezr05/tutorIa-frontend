@@ -95,7 +95,7 @@ export const NOMBRE_OTORGADO_POR: Record<OtorgadoPor, string> = {
 };
 
 export const TEXTOS_ACEPTAR_POLITICA = {
-  titulo: 'Actualizamos la política de datos',
+  titulo: 'La política de datos se actualizó',
   intro:
     'Para seguir usando TutorIA, lee la nueva versión y marca las autorizaciones obligatorias.',
   version: 'Versión',

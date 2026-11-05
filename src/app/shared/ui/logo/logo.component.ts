@@ -47,10 +47,12 @@ const MARGEN_RESPETO = 0.55;
       line-height: 0;
     }
 
+    /* El alto lo puede fijar el contenedor con --logo-alto; el ancho sigue la proporción. */
     img {
       display: block;
       max-width: none;
-      height: auto;
+      width: auto;
+      height: var(--logo-alto, auto);
     }
   `,
   host: { '[style.padding.px]': 'margen()' },

@@ -15,7 +15,7 @@ export function textosFinalidad(politica: PoliticaPublica | null): TextosFinalid
 export const NOMBRE_FINALIDAD: Record<Finalidad, string> = {
   TRATAMIENTO: 'Tratamiento de datos',
   TRANSFERENCIA_INTERNACIONAL: 'Envío a proveedores de IA fuera de Colombia',
-  PERSONALIZACION: 'Personalización del tutor',
+  PERSONALIZACION: 'Personalización de Vex',
   COMUNICACIONES: 'Correos de novedades',
   COMPRAS_MENOR: 'Compras del estudiante',
   OPINION_MENOR: 'Opinión del estudiante',

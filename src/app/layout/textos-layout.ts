@@ -3,37 +3,35 @@ import { environment } from '../../environments/environment';
 const tutor = environment.tutorNombre;
 
 export const LEMA = 'Aprendamos juntos, paso a paso';
-export const LEMA_SECUNDARIO = 'Te guío paso a paso hasta que la respuesta aparezca';
 
-/** Portada (pantalla de ingreso): qué es TutorIA y cómo funciona. */
+/**
+ * Glosario: TutorIA es la aplicación (nunca habla en primera persona ni se llama «tutor»);
+ * Vex es el avatar que guía a la persona y es el único que habla en primera persona.
+ */
+export const DESCRIPCION_TUTORIA =
+  'TutorIA es una aplicación de estudio que usa inteligencia artificial para guiarte en tu proceso de aprendizaje.';
+export const PRESENTACION_VEX = `Soy ${tutor}, tu guía: te acompaño paso a paso desde el primer tema hasta tu plan de estudio.`;
+
+/** Cómo funciona, en tres pasos (portada, ingreso, registro y /tema). */
+export const PASOS_COMO_FUNCIONA = [
+  { icono: 'enviar', texto: `Cuéntale a ${tutor} qué quieres aprender` },
+  { icono: 'check', texto: 'Responde unas preguntas para conocer tu punto de partida' },
+  { icono: 'ia', texto: 'Recibe tu plan: explicación, técnicas y actividades hechas para ti' },
+] as const;
+
+/** Panel de las pantallas de ingreso y registro: qué es TutorIA, quién es Vex y cómo funciona. */
 export const TEXTOS_PORTADA = {
-  saludo: `Hola, soy ${tutor}. Tu compañero de aprendizaje.`,
-  queEs:
-    'TutorIA es tu tutor de estudio con inteligencia artificial: cuéntame qué quieres aprender y armamos juntos tu camino.',
-  comoFuncionaTitulo: 'Así funciona',
-  pasos: [
-    `Cuéntale a ${tutor} qué quieres aprender.`,
-    'Responde unas preguntas cortas para que conozca tu punto de partida.',
-    'Recibe una explicación, técnicas de estudio y actividades hechas para ti.',
-  ],
-  crearCuenta: 'Crear cuenta',
-} as const;
-
-/** Panel lateral del registro: beneficios dichos con amabilidad. */
-export const TEXTOS_BENEFICIOS = {
-  titulo: 'Qué bueno que llegaste',
-  beneficios: [
-    'Explicaciones a tu ritmo, con ejemplos y fuentes confiables.',
-    'Un plan de estudio pensado para tu punto de partida.',
-    `${tutor} te acompaña paso a paso hasta que la respuesta aparezca.`,
-  ],
+  queEs: DESCRIPCION_TUTORIA,
+  vex: PRESENTACION_VEX,
+  comoFuncionaTitulo: 'Cómo funciona',
+  pasos: PASOS_COMO_FUNCIONA,
 } as const;
 
 export const TEXTOS_ACOMPANAMIENTO = `${tutor} está contigo en cada paso.`;
 
 export const ENLACES_NAVEGACION = [
   { ruta: '/tema', texto: 'Tema' },
-  { ruta: '/tutor', texto: 'Tutor' },
+  { ruta: '/tutor', texto: `Chat con ${tutor}` },
   { ruta: '/historial', texto: 'Historial' },
   { ruta: '/planes', texto: 'Planes' },
   { ruta: '/perfil', texto: 'Perfil' },
@@ -45,6 +43,7 @@ export const TEXTOS_SHELL = {
   cerrarMenu: 'Cerrar menú',
   cerrarSesion: 'Cerrar sesión',
   ingresar: 'Ingresar',
+  irInicio: 'Ir al inicio',
   sesionCerrada: 'Cerraste sesión. ¡Vuelve pronto!',
   pie: {
     cumplimiento: 'Cumplimiento y uso de IA',

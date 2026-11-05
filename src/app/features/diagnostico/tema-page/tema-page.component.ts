@@ -10,11 +10,13 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { DiagnosticoApiService } from '../../../core/api/diagnostico-api.service';
 import { SesionService } from '../../../core/auth/sesion.service';
-import { ApiError, comoApiError, tieneCodigo } from '../../../core/models';
+import { ApiError, NivelCognitivo, comoApiError, tieneCodigo } from '../../../core/models';
 import { AvisoErrorComponent } from '../../../shared/ui/aviso-error/aviso-error.component';
 import { BotonComponent } from '../../../shared/ui/boton/boton.component';
 import { CampoFormularioComponent } from '../../../shared/ui/campo-formulario/campo-formulario.component';
 import { ControlCampoDirective } from '../../../shared/ui/campo-formulario/control-campo.directive';
+import { IconoComponent } from '../../../shared/ui/icono/icono.component';
+import { InsigniaNivelComponent } from '../../../shared/ui/insignia-nivel/insignia-nivel.component';
 import { TarjetaComponent } from '../../../shared/ui/tarjeta/tarjeta.component';
 import { VexComponent } from '../../../shared/ui/vex/vex.component';
 import {
@@ -25,7 +27,7 @@ import { AvisoPagina, avisoDeError } from '../../../shared/utils/aviso-error';
 import { conIndicador } from '../../../shared/utils/con-indicador';
 import { enfocarPrimerError } from '../../../shared/utils/enfocar-error';
 import { LONGITUD_MAX_TEMA, normalizarTexto, temaValidator } from '../../../shared/validators';
-import { TEXTOS_TEMA } from '../diagnostico.textos';
+import { TEXTOS_COMO_FUNCIONA, TEXTOS_TEMA } from '../diagnostico.textos';
 import { FlujoDiagnosticoService } from '../flujo-diagnostico.service';
 
 @Component({
@@ -36,6 +38,8 @@ import { FlujoDiagnosticoService } from '../flujo-diagnostico.service';
     BotonComponent,
     CampoFormularioComponent,
     ControlCampoDirective,
+    IconoComponent,
+    InsigniaNivelComponent,
     TarjetaComponent,
     VexComponent,
   ],
@@ -51,6 +55,10 @@ export class TemaPageComponent {
   private readonly sesion = inject(SesionService);
 
   protected readonly textos = TEXTOS_TEMA;
+  protected readonly como = TEXTOS_COMO_FUNCIONA;
+  protected readonly niveles: readonly NivelCognitivo[] = ['BASICO', 'INTERMEDIO', 'AVANZADO'];
+  /** Solo en móvil: el bloque «¿Cómo funciona?» empieza plegado. */
+  protected readonly comoAbierto = signal(false);
   /** Saludo con el primer nombre del usuario (solo presentación). */
   protected readonly saludo = computed(() =>
     this.textos.saludo(this.sesion.usuario()?.nombre.trim().split(/\s+/)[0] ?? ''),

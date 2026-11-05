@@ -41,7 +41,7 @@ export const TEXTOS_CUMPLIMIENTO = {
 
 /** Nombre legible de cada clave de retención que envía el backend. */
 export const NOMBRE_RETENCION: Readonly<Record<string, string>> = {
-  conversaciones: 'Conversaciones con el tutor',
+  conversaciones: `Conversaciones con ${tutor}`,
   archivos: 'Archivos entregados',
   planes: 'Planes de estudio',
   diagnosticos: 'Diagnósticos',

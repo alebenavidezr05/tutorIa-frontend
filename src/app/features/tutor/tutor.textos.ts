@@ -5,7 +5,7 @@ export const TUTOR = environment.tutorNombre;
 
 export const TEXTOS_TUTOR = {
   titulo: TUTOR,
-  intro: `Tu compañero de estudio. ${TUTOR} te explica paso a paso, con ejemplos y fuentes, hasta que la respuesta aparezca.`,
+  intro: `${TUTOR} te explica paso a paso, con ejemplos y fuentes, hasta que la respuesta aparezca.`,
   nueva: 'Nueva conversación',
   nuevaTitulo: '¿Sobre qué quieres conversar?',
   tema: 'Tema de estudio',

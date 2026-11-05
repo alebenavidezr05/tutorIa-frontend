@@ -1,8 +1,11 @@
 <header class="barra">
   <div class="contenedor barra__interior">
-    <a class="barra__logo" [routerLink]="sesion.cuentaActiva() ? '/tema' : '/login'">
-      <app-logo variante="horizontal" [altura]="28" [sinMargen]="true" />
-      <span class="visualmente-oculto">Ir al inicio</span>
+    <a
+      class="barra__logo"
+      [routerLink]="sesion.cuentaActiva() ? '/tema' : '/login'"
+      [attr.aria-label]="textos.irInicio"
+    >
+      <app-logo variante="horizontal" [altura]="44" [sinMargen]="true" />
     </a>
 
     @if (sesion.cuentaActiva()) {

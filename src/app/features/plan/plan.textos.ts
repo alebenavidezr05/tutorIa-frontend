@@ -9,7 +9,7 @@ export const TEXTOS_PLAN = {
   reintentar: 'Reintentar',
   completado: '¡Completaste todas las actividades! Buen trabajo.',
   noValidado:
-    'Este plan no pasó toda nuestra verificación. Úsalo como guía y consulta con tu profesor.',
+    'Este plan no pasó toda la verificación de TutorIA. Úsalo como guía y consulta con tu profesor.',
   explicacion: 'La idea clave',
   tecnicas: 'Técnicas de estudio',
   actividades: 'Actividades',

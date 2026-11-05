@@ -155,6 +155,10 @@ export class PendienteAutorizacionPageComponent implements OnInit {
       .pipe(conIndicador(this.cargando))
       .subscribe({
         next: (autorizacion) => {
+          if (autorizacion.estado === 'DESCONOCIDO') {
+            this.error.set(true);
+            return;
+          }
           this.autorizacion.set(autorizacion);
           this.iniciarCuenta(autorizacion.puede_reenviar_en_segundos);
           if (autorizacion.estado === 'AUTORIZADA') {

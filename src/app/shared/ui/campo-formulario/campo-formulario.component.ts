@@ -4,7 +4,7 @@ import { IconoComponent } from '../icono/icono.component';
 import { estadoControl } from './estado-control';
 
 /**
- * Etiqueta + control proyectado + ayuda + error. El control proyectado lleva la directiva
+ * Etiqueta visible arriba, control proyectado (clase global `.control`), y ayuda y error debajo. El control proyectado lleva la directiva
  * `appControlCampo`, que le asigna `id`, `aria-describedby`, `aria-invalid` y `aria-required`.
  */
 @Component({
@@ -17,10 +17,10 @@ import { estadoControl } from './estado-control';
         <span class="campo__opcional">(opcional)</span>
       }
     </label>
+    <ng-content />
     @if (ayuda(); as textoAyuda) {
       <p class="campo__ayuda" [id]="idAyuda()">{{ textoAyuda }}</p>
     }
-    <ng-content />
     @if (estado.mensajeError(); as mensaje) {
       <p class="mensaje-error" [id]="idError()">
         <app-icono nombre="alerta" [tamano]="18" />
@@ -31,13 +31,14 @@ import { estadoControl } from './estado-control';
   styles: `
     :host {
       display: block;
-      margin-bottom: var(--espacio-4);
+      margin-bottom: var(--espacio-campos);
     }
 
     .campo__etiqueta {
       display: block;
       font-weight: 700;
-      margin-bottom: var(--espacio-1);
+      line-height: 1.35;
+      margin-bottom: 6px;
     }
 
     .campo__opcional {
@@ -46,8 +47,9 @@ import { estadoControl } from './estado-control';
     }
 
     .campo__ayuda {
-      margin: 0 0 var(--espacio-2);
-      font-size: var(--texto-sm);
+      margin: var(--espacio-1) 0 0;
+      font-size: var(--texto-xs);
+      line-height: 1.4;
       color: var(--color-texto-suave);
     }
   `,

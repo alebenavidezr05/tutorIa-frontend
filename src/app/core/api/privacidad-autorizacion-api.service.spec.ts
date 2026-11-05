@@ -1,7 +1,7 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { API, proveedoresHttpPrueba } from '../../../testing/proveedores-prueba';
-import { AutorizacionApiService } from './autorizacion-api.service';
+import { AutorizacionApiService, normalizarEstadoAutorizacion } from './autorizacion-api.service';
 import { PrivacidadApiService } from './privacidad-api.service';
 
 describe('PrivacidadApiService', () => {
@@ -117,5 +117,45 @@ describe('AutorizacionApiService', () => {
       token,
       eliminar_datos: true,
     });
+  });
+
+  it('normalizarEstadoAutorizacion traduce los nombres del backend', () => {
+    expect(normalizarEstadoAutorizacion('PENDIENTE_VERIFICACION')).toBe('PENDIENTE');
+    expect(normalizarEstadoAutorizacion('VENCIDA')).toBe('EXPIRADA');
+    for (const igual of ['PENDIENTE', 'EXPIRADA', 'AUTORIZADA', 'REVOCADA', 'RECHAZADA']) {
+      expect(normalizarEstadoAutorizacion(igual)).toBe(igual);
+    }
+    expect(normalizarEstadoAutorizacion('SIN_SOLICITUD')).toBe('SIN_SOLICITUD');
+    expect(normalizarEstadoAutorizacion('EN_REVISION')).toBe('DESCONOCIDO');
+    expect(normalizarEstadoAutorizacion(undefined)).toBe('DESCONOCIDO');
+  });
+
+  it('consultar, confirmar, rechazar, revocar y mia devuelven el estado normalizado', () => {
+    const estados: string[] = [];
+    const guardar = (r: { estado: string }) => estados.push(r.estado);
+    const publica = (estado: string) => ({
+      estado,
+      nombre_estudiante: 'Daniela',
+      correo_estudiante_enmascarado: 'd***@dominio.co',
+      texto_consentimiento: '...',
+      version_politica: '1',
+      permite_compras: false,
+      fecha_expiracion_token: '2026-11-08T03:24:14Z',
+    });
+    api.consultar(token).subscribe(guardar);
+    backend.expectOne(`${API}/autorizaciones/consultar`).flush(publica('PENDIENTE_VERIFICACION'));
+    api.confirmar(token, '1').subscribe(guardar);
+    backend.expectOne(`${API}/autorizaciones/confirmar`).flush(publica('AUTORIZADA'));
+    api.rechazar(token).subscribe(guardar);
+    backend.expectOne(`${API}/autorizaciones/rechazar`).flush(publica('RECHAZADA'));
+    api.revocar(token, false).subscribe(guardar);
+    backend.expectOne(`${API}/autorizaciones/revocar`).flush(publica('VENCIDA'));
+    api.mia().subscribe(guardar);
+    backend.expectOne(`${API}/autorizaciones/mia`).flush({
+      estado: 'PENDIENTE_VERIFICACION',
+      correo_acudiente_enmascarado: 'p***@correo.com',
+      puede_reenviar_en_segundos: 0,
+    });
+    expect(estados).toEqual(['PENDIENTE', 'AUTORIZADA', 'RECHAZADA', 'EXPIRADA', 'PENDIENTE']);
   });
 });

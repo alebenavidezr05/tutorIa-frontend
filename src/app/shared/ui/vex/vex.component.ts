@@ -21,7 +21,7 @@ const IMAGENES_VEX: Record<EstadoVex, ImagenVex> = {
     archivo: 'assets/vex/01_saludo.png',
     ancho: 204,
     alto: 202,
-    alt: 'Vex, tu compañero de aprendizaje, saluda con la mano',
+    alt: 'Vex, tu guía, saluda con la mano',
   },
   escuchando: {
     archivo: 'assets/vex/02_escuchando.png',
@@ -59,7 +59,7 @@ const IMAGENES_VEX: Record<EstadoVex, ImagenVex> = {
 const ESTADOS_XS: readonly EstadoVex[] = ['saludo', 'escuchando', 'acompanando'];
 
 /**
- * Vex, la mascota de TutorIA. Componente solo presentacional: elige la imagen del estado y su
+ * Vex, el avatar que guía a la persona dentro de TutorIA. Componente solo presentacional: elige la imagen del estado y su
  * tamaño (tokens `--vex-*` de los estilos globales). Si la imagen no carga, muestra un respaldo
  * discreto: un círculo coral con la letra «V».
  */
@@ -90,7 +90,8 @@ const ESTADOS_XS: readonly EstadoVex[] = ['saludo', 'escuchando', 'acompanando']
       align-items: center;
       justify-content: center;
       flex: none;
-      width: var(--vex-ancho);
+      /* Tamaño del token, sin pasar de la mitad del ancho real del PNG (--vex-nitido). */
+      --vex-final: min(var(--vex-ancho), var(--vex-nitido, var(--vex-ancho)));
       max-width: 100%;
       line-height: 0;
     }
@@ -117,7 +118,7 @@ const ESTADOS_XS: readonly EstadoVex[] = ['saludo', 'escuchando', 'acompanando']
 
     .vex__imagen {
       display: block;
-      width: 100%;
+      width: var(--vex-final);
       max-width: 100%;
       height: auto;
       object-fit: contain;
@@ -134,13 +135,13 @@ const ESTADOS_XS: readonly EstadoVex[] = ['saludo', 'escuchando', 'acompanando']
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
+      width: var(--vex-final);
       aspect-ratio: 1;
       border-radius: 50%;
       background: var(--color-acento);
       color: var(--color-sobre-acento);
       font-weight: 800;
-      font-size: calc(var(--vex-ancho) * 0.45);
+      font-size: calc(var(--vex-final) * 0.45);
       line-height: 1;
     }
 
@@ -166,6 +167,7 @@ const ESTADOS_XS: readonly EstadoVex[] = ['saludo', 'escuchando', 'acompanando']
   host: {
     '[class]': "'vex--' + tamano()",
     '[class.vex--flotante]': 'flotante()',
+    '[style.--vex-nitido]': "imagen().ancho / 2 + 'px'",
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

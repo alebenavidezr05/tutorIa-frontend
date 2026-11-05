@@ -54,9 +54,13 @@
 
 /* Margen de respeto del logo (≥ altura de la hoja coral) en vertical y a la derecha. */
 .barra__logo {
+  --logo-alto: var(--logo-barra);
+
   display: inline-flex;
+  align-items: center;
   align-self: flex-start;
-  padding-block: var(--espacio-4);
+  min-height: var(--objetivo-tactil);
+  padding-block: var(--espacio-3);
   padding-right: var(--espacio-4);
   border-radius: var(--radio-sm);
 

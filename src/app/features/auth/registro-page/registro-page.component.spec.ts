@@ -110,7 +110,7 @@ describe('RegistroPageComponent', () => {
   it('si es menor pide el correo del adulto, lo envía y luego va a /pendiente-autorizacion', async () => {
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     await llenarDatos('2011-03-01');
-    expect(el.textContent).toContain('necesitamos la autorización de un adulto responsable');
+    expect(el.textContent).toContain('necesitas la autorización de un adulto responsable');
     expect(el.textContent).toContain('Mamá, papá, acudiente o representante legal');
     const campo = el.querySelector<HTMLInputElement>('#registro-correo-acudiente');
     expect(campo?.type).toBe('email');

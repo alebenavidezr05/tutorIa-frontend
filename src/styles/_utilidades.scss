@@ -78,6 +78,21 @@
   }
 }
 
+/* Campos relacionados en dos columnas desde tableta; en móvil, una columna. */
+.rejilla-campos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: var(--espacio-4);
+
+  @include desde(sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rejilla-campos__completo {
+  grid-column: 1 / -1;
+}
+
 textarea.control {
   resize: vertical;
   min-height: 6rem;
@@ -114,6 +129,25 @@ textarea.control {
   min-height: var(--objetivo-tactil);
   padding-inline: var(--espacio-1);
   font-weight: 600;
+}
+
+/* Título de las pantallas de ingreso y registro, con un enlace opcional a la derecha. */
+.cabecera-acceso {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--espacio-4);
+  margin-bottom: var(--espacio-campos);
+
+  p {
+    margin: 0;
+  }
+}
+
+.cabecera-acceso__titulo {
+  margin: 0 0 var(--espacio-1);
+  font-size: clamp(var(--texto-lg), 3.6vh, 2.25rem);
 }
 
 .encabezado-pagina {
@@ -171,7 +205,7 @@ textarea.control {
   align-items: center;
   gap: var(--espacio-2);
   min-height: 56px;
-  padding: var(--espacio-2) var(--espacio-4) var(--espacio-2) var(--espacio-1);
+  padding: var(--espacio-2) var(--espacio-3) var(--espacio-2) var(--espacio-1);
   border: 1.5px solid var(--color-borde-control);
   border-radius: var(--radio-lg);
   background: var(--color-superficie);

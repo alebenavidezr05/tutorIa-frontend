@@ -63,7 +63,7 @@ describe('PendienteAutorizacionPageComponent', () => {
 
   it('PENDIENTE: muestra el correo enmascarado y no ofrece el enlace para el adulto', async () => {
     await abrir(mia());
-    expect(el.textContent).toContain('Le enviamos un correo a j***@gmail.com');
+    expect(el.textContent).toContain('Se envió un correo a j***@gmail.com');
     expect(boton('Ya lo autorizó, revisar')).toBeDefined();
     expect(boton('Reenviar correo')).toBeDefined();
     expect(boton('Usar otro correo')).toBeDefined();
@@ -90,7 +90,7 @@ describe('PendienteAutorizacionPageComponent', () => {
     req.flush(null, { status: 202, statusText: 'Accepted' });
     backend.expectOne(`${API}/autorizaciones/mia`).flush(mia({ puede_reenviar_en_segundos: 120 }));
     await fixture.whenStable();
-    expect(exito).toHaveBeenCalledWith('Listo, enviamos el correo de nuevo.');
+    expect(exito).toHaveBeenCalledWith('Listo, el correo se envió de nuevo.');
     expect(el.textContent).toContain('Podrás reenviar en 2:00');
   });
 
@@ -105,7 +105,7 @@ describe('PendienteAutorizacionPageComponent', () => {
         headers: { 'Retry-After': '30' },
       });
     await fixture.whenStable();
-    expect(el.textContent).toContain('Ya enviamos varios correos');
+    expect(el.textContent).toContain('Ya se enviaron varios correos');
     expect(el.textContent).toContain('Podrás reenviar en 0:30');
     expect(boton('Reenviar correo')?.disabled).toBe(true);
   });

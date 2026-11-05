@@ -1,7 +1,7 @@
 {
   "name": "TutorIA",
   "short_name": "TutorIA",
-  "description": "Tu compañero de estudio con IA. Te guía paso a paso hasta que la respuesta aparezca.",
+  "description": "Aplicación de estudio que usa inteligencia artificial para guiarte en tu proceso de aprendizaje.",
   "lang": "es-CO",
   "start_url": "/tema",
   "scope": "/",

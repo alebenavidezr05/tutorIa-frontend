@@ -50,6 +50,8 @@
   --espacio-6: 32px;
   --espacio-7: 48px;
   --espacio-8: 64px;
+  /* Separación vertical entre campos de formulario (se compacta en pantallas bajas). */
+  --espacio-campos: clamp(var(--espacio-2), 1.4vh, 20px);
   /* Aire fluido entre secciones */
   --espacio-seccion: clamp(32px, 24px + 2.5vw, 56px);
 
@@ -58,13 +60,22 @@
   --bp-md: 1024px;
   --bp-lg: 1280px;
 
-  /* Tamaños de Vex: escalan de 320 px a 1280 px de ancho. Ninguna pantalla define otros. */
+  /*
+   * Tamaños de Vex. Los PNG de public/assets/vex miden 181–217 px de ancho y ninguno se muestra a
+   * más de la mitad de su ancho real (nítido en pantallas 2x); el componente además limita cada
+   * imagen con --vex-nitido. Para un Vex más grande hay que reemplazar los PNG por versiones de
+   * mayor resolución con el mismo nombre. Ninguna pantalla define otros tamaños.
+   */
   --vex-xs: clamp(32px, 29.33px + 0.833vw, 40px);
-  --vex-sm: clamp(56px, 50.67px + 1.667vw, 72px);
-  --vex-md: clamp(96px, 85.33px + 3.333vw, 128px);
-  --vex-lg: clamp(160px, 140px + 6.25vw, 220px);
-  /* En pantallas bajas (móvil horizontal) la portada no pasa de media altura. */
-  --vex-xl: min(clamp(220px, 186.67px + 10.417vw, 320px), 45dvh);
+  --vex-sm: clamp(48px, 42.67px + 1.667vw, 64px);
+  --vex-md: clamp(64px, 58.67px + 1.667vw, 80px);
+  --vex-lg: clamp(80px, 74.67px + 1.667vw, 96px);
+  /* Nunca más de un tercio del alto de la ventana. */
+  --vex-xl: min(clamp(88px, 81.33px + 2.083vw, 108px), 33dvh);
+
+  /* Logo de TutorIA: siempre más grande y prominente que Vex en la portada y el acceso. */
+  --logo-barra: clamp(34px, 30px + 1.25vw, 44px);
+  --logo-acceso: clamp(40px, 24px + 3.2vw, 68px);
 
   /* Navegación: barra superior en móvil; en escritorio el shell la vuelve lateral (alto 0). */
   --alto-barra: 64px;
@@ -73,7 +84,9 @@
   /* Otros */
   --objetivo-tactil: 44px;
   --ancho-lectura: 70ch;
-  --ancho-contenido: 1120px;
+  --ancho-contenido: 1280px;
+  /* Pantallas de ingreso y registro: dos columnas en escritorio. */
+  --ancho-acceso: 1240px;
   --duracion-transicion: 180ms;
 }
 

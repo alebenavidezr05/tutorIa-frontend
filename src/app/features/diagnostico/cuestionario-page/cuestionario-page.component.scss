@@ -1,7 +1,7 @@
 @use 'mixins' as *;
 
 .cuestionario {
-  max-width: 720px;
+  max-width: 960px;
 }
 
 .vex-burbuja {
@@ -42,9 +42,15 @@
   margin-bottom: var(--espacio-4);
 }
 
+/* Opciones en dos columnas en escritorio para aprovechar el ancho. */
 .opciones {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--espacio-3);
+
+  @include desde(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .opcion {
