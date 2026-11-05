@@ -26,6 +26,8 @@ export interface RegistroEntrada {
   acepta_personalizacion?: boolean;
   acepta_comunicaciones?: boolean;
   entiende_datos_menor?: boolean;
+  /** Obligatorio si tiene entre 13 y 17 años; el servidor decide. */
+  correo_acudiente?: string;
 }
 
 export interface LoginEntrada {

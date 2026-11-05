@@ -1,10 +1,32 @@
+@use 'mixins' as *;
+
 .resumen {
+  display: block;
   max-width: 720px;
   margin-bottom: var(--espacio-6);
 }
 
+.resumen__cabecera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-4);
+  margin-bottom: var(--espacio-4);
+  text-align: center;
+
+  @include desde(sm) {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.resumen__datos {
+  min-width: 0;
+}
+
 .resumen__aciertos {
-  margin-block: var(--espacio-4);
+  margin-block: var(--espacio-4) 0;
   font-size: var(--texto-md);
   font-weight: 700;
 }

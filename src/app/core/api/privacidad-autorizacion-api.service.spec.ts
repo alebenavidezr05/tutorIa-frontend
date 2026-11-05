@@ -83,20 +83,20 @@ describe('AutorizacionApiService', () => {
     return req;
   }
 
-  it('solicitar envía los correos y las casillas', () => {
-    api
-      .solicitar({
-        correo_acudiente: 'mama@correo.com',
-        correo_estudiante: 'hijo@correo.com',
-        declara_representante_legal: true,
-        version_politica: '1',
-        acepta_tratamiento: true,
-        acepta_transferencia_internacional: true,
-        permite_compras: false,
-      })
-      .subscribe();
-    expect(esperarPublico(`${API}/autorizaciones`).request.body).toMatchObject({
-      permite_compras: false,
+  it('mia y reenviar usan la sesión del estudiante', () => {
+    api.mia().subscribe();
+    const mia = backend.expectOne(`${API}/autorizaciones/mia`);
+    expect(mia.request.method).toBe('GET');
+    expect(mia.request.withCredentials).toBe(true);
+
+    api.reenviar().subscribe();
+    const mismo = backend.expectOne(`${API}/autorizaciones/reenviar`);
+    expect(mismo.request.body).toEqual({});
+    expect(mismo.request.withCredentials).toBe(true);
+
+    api.reenviar('papa@correo.com').subscribe();
+    expect(backend.expectOne(`${API}/autorizaciones/reenviar`).request.body).toEqual({
+      correo_acudiente: 'papa@correo.com',
     });
   });
 
@@ -105,8 +105,13 @@ describe('AutorizacionApiService', () => {
     const consulta = esperarPublico(`${API}/autorizaciones/consultar`);
     expect(consulta.request.body).toEqual({ token });
     expect(consulta.request.urlWithParams).not.toContain(token);
-    api.confirmar(token).subscribe();
-    esperarPublico(`${API}/autorizaciones/confirmar`);
+    api.confirmar(token, '1.2').subscribe();
+    expect(esperarPublico(`${API}/autorizaciones/confirmar`).request.body).toEqual({
+      token,
+      version_politica: '1.2',
+    });
+    api.rechazar(token).subscribe();
+    expect(esperarPublico(`${API}/autorizaciones/rechazar`).request.body).toEqual({ token });
     api.revocar(token, true).subscribe();
     expect(esperarPublico(`${API}/autorizaciones/revocar`).request.body).toEqual({
       token,

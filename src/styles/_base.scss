@@ -28,9 +28,10 @@ h3,
 h4 {
   margin: 0 0 var(--espacio-3);
   font-family: var(--fuente-titulares);
-  font-weight: 400;
+  font-weight: var(--peso-titulo);
   line-height: var(--interlineado-titulo);
-  letter-spacing: 0.01em;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
 h1 {
@@ -118,8 +119,8 @@ code {
 }
 
 ::selection {
-  background: var(--color-acento);
-  color: var(--color-sobre-acento);
+  background: var(--color-acento-suave);
+  color: var(--color-texto);
 }
 
 @include sin-movimiento {

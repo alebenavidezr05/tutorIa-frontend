@@ -5,9 +5,9 @@
   flex-wrap: wrap;
   gap: var(--espacio-2) var(--espacio-3);
   align-items: center;
-  padding: var(--espacio-3);
-  border: 2px dashed var(--color-borde-control);
-  border-radius: var(--radio-md);
+  padding: var(--espacio-3) var(--espacio-4);
+  border: 1.5px dashed var(--color-borde-control);
+  border-radius: var(--radio-lg);
   background: var(--color-superficie);
 
   &--arrastrando {
@@ -29,8 +29,8 @@
   align-items: center;
   gap: var(--espacio-2);
   padding: var(--espacio-2) var(--espacio-4);
-  border: 2px solid var(--color-borde-control);
-  border-radius: var(--radio-md);
+  border: 1.5px solid var(--color-borde-control);
+  border-radius: var(--radio-pildora);
   font-weight: 700;
   cursor: pointer;
 

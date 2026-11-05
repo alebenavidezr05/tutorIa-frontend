@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { BloqueTutor, FeedbackEntrada, FuentePublica, ReporteEntrada } from '../../../core/models';
 import { IconoComponent } from '../../../shared/ui/icono/icono.component';
+import { VexComponent } from '../../../shared/ui/vex/vex.component';
 import { BloqueAnalogiaComponent } from '../bloques/bloque-analogia.component';
 import { BloqueEjemploComponent } from '../bloques/bloque-ejemplo.component';
 import { BloqueFormulaComponent } from '../bloques/bloque-formula.component';
@@ -46,6 +47,7 @@ let contador = 0;
     FeedbackMensajeComponent,
     ReportarMensajeComponent,
     VisualTutorComponent,
+    VexComponent,
   ],
   templateUrl: './mensaje-tutor.component.html',
   styleUrl: './mensaje-tutor.component.scss',

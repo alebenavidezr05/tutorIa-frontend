@@ -107,13 +107,18 @@ describe('RegistroPageComponent', () => {
     expect(navegar).toHaveBeenCalledWith('/tema');
   });
 
-  it('si es menor muestra el aviso y la casilla de opinión, y luego va a /pendiente-autorizacion', async () => {
+  it('si es menor pide el correo del adulto, lo envía y luego va a /pendiente-autorizacion', async () => {
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     await llenarDatos('2011-03-01');
-    expect(el.textContent).toContain('un adulto responsable debe autorizar tu cuenta');
+    expect(el.textContent).toContain('necesitamos la autorización de un adulto responsable');
+    expect(el.textContent).toContain('Mamá, papá, acudiente o representante legal');
+    const campo = el.querySelector<HTMLInputElement>('#registro-correo-acudiente');
+    expect(campo?.type).toBe('email');
+    expect(campo?.getAttribute('autocomplete')).toBe('email');
     expect(el.querySelector('#registro-menor')).not.toBeNull();
     expect((el.querySelector('#registro-menor') as HTMLInputElement).checked).toBe(false);
 
+    escribir('#registro-correo-acudiente', 'Mama@Correo.com');
     marcar('registro-tratamiento');
     marcar('registro-transferencia');
     marcar('registro-menor');
@@ -121,9 +126,77 @@ describe('RegistroPageComponent', () => {
     botonRegistro().click();
     const req = backend.expectOne(`${API}/auth/registro`);
     expect(req.request.body.entiende_datos_menor).toBe(true);
+    expect(req.request.body.correo_acudiente).toBe('mama@correo.com');
     req.flush(usuarioPrueba({ es_menor: true, estado_cuenta: 'PENDIENTE_AUTORIZACION' }));
     expect(navegar).toHaveBeenCalledWith('/pendiente-autorizacion');
   });
+
+  it('el correo del adulto solo aparece entre 13 y 17 años', async () => {
+    await llenarDatos('2000-05-10');
+    expect(el.querySelector('#registro-correo-acudiente')).toBeNull();
+    escribir('#registro-fecha', '2009-01-01');
+    await fixture.whenStable();
+    expect(el.querySelector('#registro-correo-acudiente')).not.toBeNull();
+    escribir('#registro-fecha', '2016-01-01');
+    await fixture.whenStable();
+    expect(el.querySelector('#registro-correo-acudiente')).toBeNull();
+  });
+
+  it('el correo del adulto es obligatorio, válido y distinto del propio', async () => {
+    await llenarDatos('2011-03-01');
+    marcar('registro-tratamiento');
+    marcar('registro-transferencia');
+    await fixture.whenStable();
+    botonRegistro().click();
+    await fixture.whenStable();
+    backend.expectNone(`${API}/auth/registro`);
+    const error = () => el.querySelector('#registro-correo-acudiente-error')?.textContent ?? '';
+    expect(error()).not.toBe('');
+
+    escribir('#registro-correo-acudiente', 'no-es-correo');
+    await fixture.whenStable();
+    expect(error()).toContain('correo válido');
+
+    escribir('#registro-correo-acudiente', 'laura@correo.com');
+    await fixture.whenStable();
+    expect(error()).toContain('distinto al tuyo');
+  });
+
+  it('un adulto que cambia la fecha no envía correo_acudiente', async () => {
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    await llenarDatos('2011-03-01');
+    escribir('#registro-correo-acudiente', 'mama@correo.com');
+    escribir('#registro-fecha', '2000-05-10');
+    marcar('registro-tratamiento');
+    marcar('registro-transferencia');
+    await fixture.whenStable();
+    botonRegistro().click();
+    const req = backend.expectOne(`${API}/auth/registro`);
+    expect(req.request.body).not.toHaveProperty('correo_acudiente');
+    req.flush(usuarioPrueba());
+  });
+
+  it.each(['CORREO_ACUDIENTE_REQUERIDO', 'CORREO_ACUDIENTE_INVALIDO'])(
+    '%s se muestra junto al campo del adulto',
+    async (codigo) => {
+      await llenarDatos('2011-03-01');
+      escribir('#registro-correo-acudiente', 'mama@correo.com');
+      marcar('registro-tratamiento');
+      marcar('registro-transferencia');
+      await fixture.whenStable();
+      botonRegistro().click();
+      backend
+        .expectOne(`${API}/auth/registro`)
+        .flush(cuerpoError(codigo, 'Revisa el correo del adulto.'), {
+          status: 422,
+          statusText: '',
+        });
+      await fixture.whenStable();
+      expect(el.querySelector('#registro-correo-acudiente-error')?.textContent).toContain(
+        'Revisa el correo del adulto.',
+      );
+    },
+  );
 
   it('CONSENTIMIENTO_REQUERIDO marca la casilla faltante', async () => {
     await llenarDatos('2000-05-10');
@@ -131,17 +204,15 @@ describe('RegistroPageComponent', () => {
     marcar('registro-transferencia');
     await fixture.whenStable();
     botonRegistro().click();
-    backend
-      .expectOne(`${API}/auth/registro`)
-      .flush(
-        cuerpoError('CONSENTIMIENTO_REQUERIDO', 'Falta', {
-          finalidades: ['TRANSFERENCIA_INTERNACIONAL'],
-        }),
-        {
-          status: 422,
-          statusText: '',
-        },
-      );
+    backend.expectOne(`${API}/auth/registro`).flush(
+      cuerpoError('CONSENTIMIENTO_REQUERIDO', 'Falta', {
+        finalidades: ['TRANSFERENCIA_INTERNACIONAL'],
+      }),
+      {
+        status: 422,
+        statusText: '',
+      },
+    );
     await fixture.whenStable();
     expect(el.querySelector('#registro-transferencia')?.getAttribute('aria-invalid')).toBe('true');
     expect(el.querySelector('#registro-tratamiento')?.getAttribute('aria-invalid')).toBeNull();

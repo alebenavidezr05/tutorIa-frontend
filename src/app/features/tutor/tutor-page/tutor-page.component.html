@@ -34,7 +34,7 @@
   <h2 id="tutor-lista">{{ textos.lista }}</h2>
 
   @if (cargando() && conversaciones().length === 0) {
-    <app-spinner etiqueta="Cargando tus conversaciones…" />
+    <app-spinner etiqueta="Cargando tus conversaciones…" [conVex]="true" />
   } @else if (error()) {
     <app-estado-vacio [titulo]="textos.error">
       <button app-boton type="button" variante="primario" (click)="cargar(1)">

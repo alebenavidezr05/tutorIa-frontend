@@ -5,14 +5,14 @@ export const TUTOR = environment.tutorNombre;
 
 export const TEXTOS_TUTOR = {
   titulo: TUTOR,
-  intro: `Tu tutor de estudio. ${TUTOR} te explica paso a paso, con ejemplos y fuentes, pero no te hace la tarea.`,
+  intro: `Tu compañero de estudio. ${TUTOR} te explica paso a paso, con ejemplos y fuentes, hasta que la respuesta aparezca.`,
   nueva: 'Nueva conversación',
   nuevaTitulo: '¿Sobre qué quieres conversar?',
   tema: 'Tema de estudio',
   ayudaTema: 'Por ejemplo: "ecuaciones de primer grado" o "el ciclo del agua".',
   empezar: 'Empezar a conversar',
   lista: 'Tus conversaciones',
-  vacioTitulo: 'Aún no has conversado con el tutor',
+  vacioTitulo: 'Aún no tienes conversaciones. ¿Empezamos con la primera?',
   vacioTexto: `Escribe un tema y ${TUTOR} te ayudará a entenderlo a tu ritmo.`,
   abrir: 'Abrir',
   borrar: 'Borrar',
@@ -21,7 +21,7 @@ export const TEXTOS_TUTOR = {
   borrada: 'Conversación borrada.',
   ultimoMensaje: 'Último mensaje',
   cargarMas: 'Ver más conversaciones',
-  error: 'No pudimos cargar tus conversaciones.',
+  error: 'Algo no salió como esperaba. Intentémoslo de nuevo.',
   reintentar: 'Reintentar',
 } as const;
 

@@ -1,5 +1,5 @@
 @if (cargando()) {
-  <app-spinner [etiqueta]="textos.cargando" />
+  <app-spinner [etiqueta]="textos.cargando" [conVex]="true" />
 } @else if (error()) {
   <app-estado-vacio [titulo]="textos.error">
     <button app-boton type="button" variante="primario" (click)="cargar()">
@@ -21,12 +21,15 @@
 
   <div class="plan">
     <div class="plan__principal">
-      <section aria-labelledby="plan-explicacion">
-        <h2 id="plan-explicacion">{{ textos.explicacion }}</h2>
-        <p class="plan__explicacion">{{ p.explicacion }}</p>
+      <section class="bloque bloque--explicacion" aria-labelledby="plan-explicacion">
+        <app-vex class="bloque__vex" estado="explicando" tamano="lg" />
+        <div class="bloque__cuerpo">
+          <h2 id="plan-explicacion">{{ textos.explicacion }}</h2>
+          <p class="plan__explicacion">{{ p.explicacion }}</p>
+        </div>
       </section>
 
-      <section aria-labelledby="plan-actividades">
+      <section class="bloque" aria-labelledby="plan-actividades">
         <h2 id="plan-actividades">{{ textos.actividades }}</h2>
         <p class="texto-suave">{{ textos.actividadesAyuda }}</p>
         @if (p.acepta_archivos) {
@@ -38,6 +41,12 @@
           [etiqueta]="textoProgreso()"
           idBase="plan-progreso"
         />
+        @if (actividades().length > 0 && completadas() === actividades().length) {
+          <p class="plan__celebracion">
+            <app-vex estado="celebrando" tamano="sm" />
+            <span>{{ textos.completado }}</span>
+          </p>
+        }
         <ol class="lista-limpia plan__actividades">
           @for (actividad of actividades(); track actividad.id_actividad) {
             <li>

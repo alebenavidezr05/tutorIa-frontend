@@ -14,10 +14,11 @@ import { IconoComponent } from '../icono/icono.component';
       display: flex;
       align-items: flex-start;
       gap: var(--espacio-2);
-      padding: var(--espacio-2) var(--espacio-3);
-      border-left: 4px solid var(--color-acento);
-      border-radius: var(--radio-sm);
+      padding: var(--espacio-2) var(--espacio-4);
+      border: 1px solid var(--color-borde-suave);
+      border-radius: var(--radio-lg);
       background: var(--color-superficie);
+      box-shadow: var(--sombra-suave);
       color: var(--color-texto);
       font-size: var(--texto-sm);
     }

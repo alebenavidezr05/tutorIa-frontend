@@ -3,7 +3,7 @@
 .chat {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - 64px);
+  min-height: calc(100dvh - var(--alto-barra));
   max-width: 920px;
   margin-inline: auto;
 }
@@ -33,7 +33,7 @@
 /* El aviso de IA queda fijo bajo la barra superior mientras se lee el chat. */
 .chat__aviso-ia {
   position: sticky;
-  top: 64px;
+  top: var(--alto-barra);
   z-index: 5;
 }
 

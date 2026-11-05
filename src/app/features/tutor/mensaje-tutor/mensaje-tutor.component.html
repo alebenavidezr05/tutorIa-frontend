@@ -11,7 +11,7 @@
 } @else {
   <div class="burbuja">
     <p class="burbuja__autor" aria-hidden="true">
-      <app-icono nombre="ia" [tamano]="16" /> {{ tutor }}
+      <app-vex estado="acompanando" tamano="xs" [decorativo]="true" /> {{ tutor }}
     </p>
     <div class="burbuja__bloques">
       @for (item of bloques(); track item.clave) {

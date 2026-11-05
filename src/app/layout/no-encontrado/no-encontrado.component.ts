@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BotonComponent } from '../../shared/ui/boton/boton.component';
-import { LogoComponent } from '../../shared/ui/logo/logo.component';
+import { VexComponent } from '../../shared/ui/vex/vex.component';
 
 @Component({
   selector: 'app-no-encontrado',
-  imports: [RouterLink, LogoComponent, BotonComponent],
+  imports: [RouterLink, VexComponent, BotonComponent],
   template: `
     <main id="contenido" class="no-encontrado" tabindex="-1">
-      <app-logo variante="icono" [altura]="96" />
+      <app-vex estado="acompanando" tamano="md" />
       <h1>No encontramos esta página</h1>
       <p>Puede que el enlace esté mal escrito o que la página ya no exista.</p>
       <a app-boton variante="primario" routerLink="/tema">Ir al inicio</a>

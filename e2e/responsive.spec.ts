@@ -54,7 +54,6 @@ test.describe('pantallas públicas', () => {
   for (const ruta of [
     '/login',
     '/registro',
-    '/autorizacion',
     '/autorizacion/confirmar',
     '/politica',
     '/no-existe',
@@ -69,7 +68,7 @@ test.describe('pantallas públicas', () => {
   test('el logo y el theme-color están presentes', async ({ page }) => {
     await page.goto('/login');
     await expect(page.getByAltText('TutorIA').first()).toBeVisible();
-    await expect(page.locator('meta[name=theme-color]')).toHaveAttribute('content', '#0B1B2E');
+    await expect(page.locator('meta[name=theme-color]')).toHaveAttribute('content', '#0D1B2A');
   });
 });
 
@@ -115,7 +114,7 @@ test.describe('pantallas con sesión', () => {
 
   test('menú de navegación accesible con teclado', async ({ page, viewport }) => {
     await page.goto('/tema');
-    if ((viewport?.width ?? 0) < 900) {
+    if ((viewport?.width ?? 0) < 1024) {
       const boton = page.getByRole('button', { name: 'Menú' });
       await boton.focus();
       await page.keyboard.press('Enter');

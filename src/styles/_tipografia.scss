@@ -1,13 +1,5 @@
 // Fuentes alojadas localmente (sin CDN). Licencia SIL OFL en src/assets/fonts.
 @font-face {
-  font-family: 'Anton';
-  src: url('/assets/fonts/anton-latin-400.woff2') format('woff2');
-  font-weight: 400 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'Inter';
   src: url('/assets/fonts/inter-latin-variable.woff2') format('woff2');
   font-weight: 100 900;
@@ -16,7 +8,8 @@
 }
 
 :root {
-  --fuente-titulares: 'Anton', 'Archivo Narrow', 'Arial Narrow', sans-serif;
+  /* Títulos en Inter: redondos y amables, sin la condensada en mayúsculas del borrador */
+  --fuente-titulares: 'Inter', system-ui, -apple-system, 'Segoe UI', roboto, sans-serif;
   --fuente-cuerpo: 'Inter', system-ui, -apple-system, 'Segoe UI', roboto, sans-serif;
   --fuente-mono: ui-monospace, 'Cascadia Code', consolas, monospace;
 
@@ -24,10 +17,13 @@
   --texto-xs: 0.875rem;
   --texto-sm: 0.9375rem;
   --texto-base: 1rem;
+  --texto-lectura: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem); /* explicaciones largas */
   --texto-md: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
   --texto-lg: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
   --texto-xl: clamp(1.625rem, 1.3rem + 1.4vw, 2.25rem);
-  --texto-2xl: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
-  --interlineado: 1.5;
-  --interlineado-titulo: 1.1;
+  --texto-2xl: clamp(1.875rem, 1.45rem + 2vw, 3rem);
+  --interlineado: 1.6;
+  --interlineado-lectura: 1.7;
+  --interlineado-titulo: 1.2;
+  --peso-titulo: 750;
 }

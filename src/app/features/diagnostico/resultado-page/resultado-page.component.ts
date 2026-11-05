@@ -10,6 +10,7 @@ import { InsigniaNivelComponent } from '../../../shared/ui/insignia-nivel/insign
 import { ListaReferenciasComponent } from '../../../shared/ui/lista-referencias/lista-referencias.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 import { TarjetaComponent } from '../../../shared/ui/tarjeta/tarjeta.component';
+import { VexComponent } from '../../../shared/ui/vex/vex.component';
 import { AvisoPagina, avisoDeError } from '../../../shared/utils/aviso-error';
 import { conIndicador } from '../../../shared/utils/con-indicador';
 import { construirRevision } from '../construir-revision';
@@ -28,6 +29,7 @@ import { FlujoDiagnosticoService } from '../flujo-diagnostico.service';
     ListaReferenciasComponent,
     SpinnerComponent,
     TarjetaComponent,
+    VexComponent,
   ],
   templateUrl: './resultado-page.component.html',
   styleUrl: './resultado-page.component.scss',

@@ -24,6 +24,8 @@ export type CodigoError =
   | 'AUTORIZACION_INVALIDA'
   | 'DEMASIADAS_SOLICITUDES'
   | 'EDAD_NO_PERMITIDA'
+  | 'CORREO_ACUDIENTE_REQUERIDO'
+  | 'CORREO_ACUDIENTE_INVALIDO'
   | 'LLM_NO_DISPONIBLE'
   | 'LLM_RESPUESTA_INVALIDA'
   | 'DATO_INVALIDO'
@@ -41,6 +43,8 @@ export interface ApiError {
   readonly codigo: string;
   readonly mensaje: string;
   readonly detalles: DetalleError[] | null;
+  /** Segundos de la cabecera `Retry-After` (solo si el servidor la envía, p. ej. en un 429). */
+  readonly reintentarEnSegundos?: number;
 }
 
 /** Cuerpo uniforme de error del backend. */

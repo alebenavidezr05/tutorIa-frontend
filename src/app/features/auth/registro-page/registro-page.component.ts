@@ -5,8 +5,10 @@ import {
   ElementRef,
   OnInit,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -44,6 +46,7 @@ import {
   NIVELES_POR_TIPO,
   contrasenaValidator,
   correoValidator,
+  correosDistintosValidator,
   fechaNacimientoValidator,
   nivelEducativoValidator,
   nombreValidator,
@@ -95,19 +98,24 @@ export class RegistroPageComponent implements OnInit {
   protected readonly politica = signal<PoliticaPublica | null>(null);
 
   // Ninguna casilla viene premarcada (Ley 1581).
-  protected readonly form = inject(NonNullableFormBuilder).group({
-    nombre: ['', [Validators.required, nombreValidator()]],
-    correo: ['', [Validators.required, correoValidator()]],
-    contrasena: ['', [Validators.required, contrasenaValidator()]],
-    fechaNacimiento: ['', [Validators.required, fechaNacimientoValidator()]],
-    tipoNivel: ['' as TipoNivel | '', [Validators.required]],
-    nivelEducativo: ['', [Validators.required, nivelEducativoValidator('tipoNivel')]],
-    aceptaTratamiento: [false, [Validators.requiredTrue]],
-    aceptaTransferenciaInternacional: [false, [Validators.requiredTrue]],
-    aceptaPersonalizacion: [false],
-    aceptaComunicaciones: [false],
-    entiendeDatosMenor: [false],
-  });
+  // El correo del adulto solo se habilita (y se valida) mientras la fecha indique 13 a 17 años.
+  protected readonly form = inject(NonNullableFormBuilder).group(
+    {
+      nombre: ['', [Validators.required, nombreValidator()]],
+      correo: ['', [Validators.required, correoValidator()]],
+      contrasena: ['', [Validators.required, contrasenaValidator()]],
+      fechaNacimiento: ['', [Validators.required, fechaNacimientoValidator()]],
+      tipoNivel: ['' as TipoNivel | '', [Validators.required]],
+      nivelEducativo: ['', [Validators.required, nivelEducativoValidator('tipoNivel')]],
+      aceptaTratamiento: [false, [Validators.requiredTrue]],
+      aceptaTransferenciaInternacional: [false, [Validators.requiredTrue]],
+      aceptaPersonalizacion: [false],
+      aceptaComunicaciones: [false],
+      entiendeDatosMenor: [false],
+      correoAcudiente: [{ value: '', disabled: true }, [Validators.required, correoValidator()]],
+    },
+    { validators: [correosDistintosValidator('correo', 'correoAcudiente')] },
+  );
 
   private readonly valores = toSignal(
     this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
@@ -142,6 +150,20 @@ export class RegistroPageComponent implements OnInit {
     this.form.controls.tipoNivel.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.form.controls.nivelEducativo.setValue(''));
+
+    // El navegador solo muestra u oculta el campo: la edad real la decide el servidor.
+    effect(() => {
+      const menor = this.esMenor();
+      untracked(() => {
+        const control = this.form.controls.correoAcudiente;
+        if (menor && control.disabled) {
+          control.enable();
+        } else if (!menor && control.enabled) {
+          control.reset('');
+          control.disable();
+        }
+      });
+    });
   }
 
   ngOnInit(): void {
@@ -190,6 +212,10 @@ export class RegistroPageComponent implements OnInit {
         break;
       case 'EDAD_NO_PERMITIDA':
         marcarControles([c.fechaNacimiento], error.mensaje);
+        break;
+      case 'CORREO_ACUDIENTE_REQUERIDO':
+      case 'CORREO_ACUDIENTE_INVALIDO':
+        marcarControles([c.correoAcudiente], error.mensaje);
         break;
       case 'CONSENTIMIENTO_REQUERIDO':
         if (!aplicarErroresServidor(this.form, error)) {

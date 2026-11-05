@@ -1,9 +1,19 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { VexComponent } from '../vex/vex.component';
 
+/**
+ * Indicador de carga. Con `conVex` muestra a Vex pensando (carga de página completa); sin él,
+ * un aro discreto para cargas dentro de un formulario o una tarjeta.
+ */
 @Component({
   selector: 'app-spinner',
+  imports: [VexComponent],
   template: `
-    <span class="spinner" aria-hidden="true"></span>
+    @if (conVex()) {
+      <app-vex estado="pensando" tamano="md" [decorativo]="true" [flotante]="true" />
+    } @else {
+      <span class="spinner" aria-hidden="true"></span>
+    }
     <span [class.visualmente-oculto]="!etiquetaVisible()">{{ etiqueta() }}</span>
   `,
   styles: `
@@ -14,10 +24,19 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       color: var(--color-texto);
     }
 
+    :host(.spinner--vex) {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-block: var(--espacio-7);
+      font-weight: 600;
+      text-align: center;
+    }
+
     .spinner {
       width: 28px;
       height: 28px;
-      border: 3px solid var(--color-borde-control);
+      border: 3px solid var(--color-borde);
       border-top-color: var(--color-acento);
       border-radius: 50%;
       animation: girar 0.9s linear infinite;
@@ -29,10 +48,11 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       }
     }
   `,
-  host: { role: 'status', 'aria-live': 'polite' },
+  host: { role: 'status', 'aria-live': 'polite', '[class.spinner--vex]': 'conVex()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpinnerComponent {
   readonly etiqueta = input('Cargando…');
   readonly etiquetaVisible = input(true);
+  readonly conVex = input(false);
 }

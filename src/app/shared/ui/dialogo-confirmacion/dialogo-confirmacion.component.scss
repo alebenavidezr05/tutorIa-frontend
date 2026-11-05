@@ -3,12 +3,12 @@
 .dialogo {
   width: min(520px, calc(100vw - 2 * var(--espacio-4)));
   max-height: calc(100dvh - 2 * var(--espacio-4));
-  padding: var(--espacio-5);
-  border: 2px solid var(--color-borde-control);
-  border-radius: var(--radio-lg);
+  padding: var(--espacio-6) var(--espacio-5);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radio-xl);
   background: var(--color-superficie-elevada);
   color: var(--color-texto);
-  box-shadow: var(--sombra-suave);
+  box-shadow: var(--sombra-elevada);
   overflow-y: auto;
 
   &::backdrop {

@@ -4,9 +4,10 @@ import { EstadoActividad } from '../../core/models';
 const tutor = environment.tutorNombre;
 
 export const TEXTOS_PLAN = {
-  cargando: 'Cargando tu plan…',
-  error: 'No pudimos cargar este plan.',
+  cargando: 'Estoy trayendo tu plan…',
+  error: 'Algo no salió como esperaba. Intentémoslo de nuevo.',
   reintentar: 'Reintentar',
+  completado: '¡Completaste todas las actividades! Buen trabajo.',
   noValidado:
     'Este plan no pasó toda nuestra verificación. Úsalo como guía y consulta con tu profesor.',
   explicacion: 'La idea clave',

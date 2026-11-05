@@ -13,7 +13,7 @@
 }
 
 @if (cargando()) {
-  <app-spinner etiqueta="Cargando las referencias…" />
+  <app-spinner etiqueta="Cargando las referencias…" [conVex]="true" />
 } @else {
   <app-tarjeta>
     <app-lista-referencias

@@ -1,5 +1,35 @@
-export const LEMA = 'Aprender con IA, no a través de ella';
-export const LEMA_SECUNDARIO = 'Te enseña, no te hace la tarea';
+import { environment } from '../../environments/environment';
+
+const tutor = environment.tutorNombre;
+
+export const LEMA = 'Aprendamos juntos, paso a paso';
+export const LEMA_SECUNDARIO = 'Te guío paso a paso hasta que la respuesta aparezca';
+
+/** Portada (pantalla de ingreso): qué es TutorIA y cómo funciona. */
+export const TEXTOS_PORTADA = {
+  saludo: `Hola, soy ${tutor}. Tu compañero de aprendizaje.`,
+  queEs:
+    'TutorIA es tu tutor de estudio con inteligencia artificial: cuéntame qué quieres aprender y armamos juntos tu camino.',
+  comoFuncionaTitulo: 'Así funciona',
+  pasos: [
+    `Cuéntale a ${tutor} qué quieres aprender.`,
+    'Responde unas preguntas cortas para que conozca tu punto de partida.',
+    'Recibe una explicación, técnicas de estudio y actividades hechas para ti.',
+  ],
+  crearCuenta: 'Crear cuenta',
+} as const;
+
+/** Panel lateral del registro: beneficios dichos con amabilidad. */
+export const TEXTOS_BENEFICIOS = {
+  titulo: 'Qué bueno que llegaste',
+  beneficios: [
+    'Explicaciones a tu ritmo, con ejemplos y fuentes confiables.',
+    'Un plan de estudio pensado para tu punto de partida.',
+    `${tutor} te acompaña paso a paso hasta que la respuesta aparezca.`,
+  ],
+} as const;
+
+export const TEXTOS_ACOMPANAMIENTO = `${tutor} está contigo en cada paso.`;
 
 export const ENLACES_NAVEGACION = [
   { ruta: '/tema', texto: 'Tema' },

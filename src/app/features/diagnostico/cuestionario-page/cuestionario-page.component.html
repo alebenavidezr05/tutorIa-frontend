@@ -6,7 +6,7 @@
 </header>
 
 @if (cargando()) {
-  <app-spinner [etiqueta]="textos.cargando" />
+  <app-spinner [etiqueta]="textos.cargando" [conVex]="true" />
 } @else if (error()) {
   <app-estado-vacio [titulo]="textos.error">
     <button app-boton type="button" variante="primario" (click)="cargar()">Reintentar</button>
@@ -21,6 +21,11 @@
       idBase="cuestionario"
     />
 
+    <div class="vex-burbuja">
+      <app-vex [estado]="enviando() ? 'pensando' : 'escuchando'" tamano="md" />
+      <p class="vex-burbuja__texto">{{ enviando() ? textos.enviando : textos.animo }}</p>
+    </div>
+
     <fieldset class="pregunta" aria-labelledby="cuestionario-etiqueta cuestionario-enunciado">
       <h2 #enunciado id="cuestionario-enunciado" class="pregunta__enunciado" tabindex="-1">
         {{ pregunta.enunciado }}
@@ -29,7 +34,7 @@
         @for (opcion of opciones(); track opcion.letra) {
           <li>
             <label
-              class="opcion"
+              class="opcion-tarjeta opcion"
               [class.opcion--elegida]="flujo.respuestaActual() === opcion.letra"
             >
               <input

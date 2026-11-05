@@ -32,6 +32,7 @@ import { IconoComponent } from '../../../shared/ui/icono/icono.component';
 import { InsigniaNivelComponent } from '../../../shared/ui/insignia-nivel/insignia-nivel.component';
 import { ListaReferenciasComponent } from '../../../shared/ui/lista-referencias/lista-referencias.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
+import { VexComponent } from '../../../shared/ui/vex/vex.component';
 import { AvisoPagina, avisoDeError } from '../../../shared/utils/aviso-error';
 import { conIndicador } from '../../../shared/utils/con-indicador';
 import { referenciaApaAVista } from '../../../shared/utils/referencias';
@@ -61,6 +62,7 @@ const MENSAJE_LLM_CHAT = `Estamos teniendo problemas para generar la respuesta d
     MensajeTutorComponent,
     MensajeUsuarioComponent,
     SpinnerComponent,
+    VexComponent,
   ],
   providers: [ChatStore],
   templateUrl: './chat-page.component.html',

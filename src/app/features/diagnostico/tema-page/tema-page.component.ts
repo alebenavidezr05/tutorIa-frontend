@@ -1,12 +1,22 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DiagnosticoApiService } from '../../../core/api/diagnostico-api.service';
+import { SesionService } from '../../../core/auth/sesion.service';
 import { ApiError, comoApiError, tieneCodigo } from '../../../core/models';
 import { AvisoErrorComponent } from '../../../shared/ui/aviso-error/aviso-error.component';
 import { BotonComponent } from '../../../shared/ui/boton/boton.component';
 import { CampoFormularioComponent } from '../../../shared/ui/campo-formulario/campo-formulario.component';
 import { ControlCampoDirective } from '../../../shared/ui/campo-formulario/control-campo.directive';
+import { TarjetaComponent } from '../../../shared/ui/tarjeta/tarjeta.component';
+import { VexComponent } from '../../../shared/ui/vex/vex.component';
 import {
   aplicarErroresServidor,
   marcarControles,
@@ -26,6 +36,8 @@ import { FlujoDiagnosticoService } from '../flujo-diagnostico.service';
     BotonComponent,
     CampoFormularioComponent,
     ControlCampoDirective,
+    TarjetaComponent,
+    VexComponent,
   ],
   templateUrl: './tema-page.component.html',
   styleUrl: './tema-page.component.scss',
@@ -36,8 +48,13 @@ export class TemaPageComponent {
   private readonly flujo = inject(FlujoDiagnosticoService);
   private readonly router = inject(Router);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly sesion = inject(SesionService);
 
   protected readonly textos = TEXTOS_TEMA;
+  /** Saludo con el primer nombre del usuario (solo presentación). */
+  protected readonly saludo = computed(() =>
+    this.textos.saludo(this.sesion.usuario()?.nombre.trim().split(/\s+/)[0] ?? ''),
+  );
   protected readonly maximo = LONGITUD_MAX_TEMA;
   protected readonly cargando = signal(false);
   protected readonly aviso = signal<AvisoPagina | null>(null);

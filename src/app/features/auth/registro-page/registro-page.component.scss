@@ -5,29 +5,26 @@
 .grupo__titulo {
   margin-bottom: var(--espacio-3);
   font-family: var(--fuente-titulares);
+  font-weight: var(--peso-titulo);
   font-size: var(--texto-lg);
 }
 
 .opciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-2) var(--espacio-4);
-  margin-bottom: var(--espacio-3);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
 }
 
-.opcion {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--objetivo-tactil);
-  padding-right: var(--espacio-3);
-  border: 2px solid var(--color-borde-control);
-  border-radius: var(--radio-md);
-  font-weight: 600;
-  cursor: pointer;
+.menor,
+.menor__campo {
+  animation: aparecer var(--duracion-transicion) ease-out;
+}
 
-  &:has(input:checked) {
-    border-color: var(--color-primario);
-    background: var(--color-superficie);
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
 }
 

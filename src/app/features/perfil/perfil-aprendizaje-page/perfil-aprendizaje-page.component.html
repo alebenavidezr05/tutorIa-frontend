@@ -6,7 +6,7 @@
 </header>
 
 @if (cargando() && !perfil()) {
-  <app-spinner etiqueta="Cargando tu perfil de aprendizaje…" />
+  <app-spinner etiqueta="Cargando tu perfil de aprendizaje…" [conVex]="true" />
 } @else if (error()) {
   <app-estado-vacio [titulo]="textos.error">
     <button app-boton type="button" variante="primario" (click)="cargar()">

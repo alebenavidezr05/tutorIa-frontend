@@ -67,7 +67,7 @@
       />
     </app-campo-formulario>
 
-    <!-- Aviso reactivo para menores de 18 años -->
+    <!-- Aviso reactivo para menores de 18 años: pide el correo del adulto responsable -->
     <div aria-live="polite">
       @if (esMenor()) {
         <div class="alerta alerta--aviso menor">
@@ -83,6 +83,26 @@
         </div>
       }
     </div>
+    @if (esMenor()) {
+      <app-campo-formulario
+        class="menor__campo"
+        [etiqueta]="textos.correoAcudiente"
+        idCampo="registro-correo-acudiente"
+        [ayuda]="textos.ayudaCorreoAcudiente"
+        [control]="form.controls.correoAcudiente"
+      >
+        <input
+          appControlCampo
+          class="control"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          autocapitalize="off"
+          spellcheck="false"
+          formControlName="correoAcudiente"
+        />
+      </app-campo-formulario>
+    }
   </fieldset>
 
   <fieldset class="grupo">
@@ -94,11 +114,11 @@
       [attr.aria-describedby]="estadoTipo.mensajeError() ? 'registro-tipo-error' : null"
     >
       <span id="registro-tipo-titulo" class="visualmente-oculto">{{ textos.tipoNivel }}</span>
-      <label class="opcion">
+      <label class="opcion-tarjeta">
         <input type="radio" class="casilla-nativa" formControlName="tipoNivel" value="COLEGIO" />
         {{ textos.colegio }}
       </label>
-      <label class="opcion">
+      <label class="opcion-tarjeta">
         <input
           type="radio"
           class="casilla-nativa"

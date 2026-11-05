@@ -13,11 +13,12 @@ export interface ValoresRegistro {
   aceptaPersonalizacion: boolean;
   aceptaComunicaciones: boolean;
   entiendeDatosMenor: boolean;
+  correoAcudiente: string;
 }
 
 /**
- * Cuerpo de `POST /auth/registro`. Envía siempre la versión de la política que el usuario vio y
- * `entiende_datos_menor` solo si es menor de edad.
+ * Cuerpo de `POST /auth/registro`. Envía siempre la versión de la política que el usuario vio;
+ * `entiende_datos_menor` y `correo_acudiente` solo si es menor de edad.
  */
 export function construirRegistro(
   valores: ValoresRegistro,
@@ -36,6 +37,11 @@ export function construirRegistro(
     acepta_transferencia_internacional: valores.aceptaTransferenciaInternacional,
     acepta_personalizacion: valores.aceptaPersonalizacion,
     acepta_comunicaciones: valores.aceptaComunicaciones,
-    ...(esMenor ? { entiende_datos_menor: valores.entiendeDatosMenor } : {}),
+    ...(esMenor
+      ? {
+          entiende_datos_menor: valores.entiendeDatosMenor,
+          correo_acudiente: normalizarCorreo(valores.correoAcudiente),
+        }
+      : {}),
   };
 }

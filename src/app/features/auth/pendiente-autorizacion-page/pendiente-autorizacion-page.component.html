@@ -1,39 +1,118 @@
 <h1>{{ textos.titulo }}</h1>
-<p>{{ textos.explicacion }}</p>
 
-<ol class="pasos">
-  @for (paso of textos.pasos; track paso) {
-    <li>{{ paso }}</li>
-  }
-</ol>
-
-<div class="alerta alerta--aviso">
-  <app-icono class="alerta__icono" nombre="info" />
-  <p class="alerta__cuerpo">{{ textos.avisoCorreo }}</p>
-</div>
-
-<h2>{{ textos.enlaceTitulo }}</h2>
-<code class="enlace-acudiente">{{ enlace }}</code>
-<div class="acciones">
-  <button app-boton type="button" variante="secundario" (click)="copiarEnlace()">
-    {{ textos.copiar }}
-  </button>
-  <button app-boton type="button" variante="texto" (click)="abrirAutorizacion()">
-    {{ textos.abrir }}
-  </button>
-</div>
-
-<div class="acciones">
-  <button
-    app-boton
-    type="button"
-    variante="acento"
-    [cargando]="revisando()"
-    [disabled]="revisando()"
-    (click)="revisar()"
+@if (cargando() && !autorizacion()) {
+  <app-spinner [etiqueta]="textos.cargando" [conVex]="true" />
+} @else if (error()) {
+  <div class="alerta alerta--error" role="alert">
+    <app-icono class="alerta__icono" nombre="alerta" />
+    <div class="alerta__cuerpo">
+      <p>{{ textos.error }}</p>
+      <button app-boton type="button" variante="secundario" (click)="cargar()">
+        {{ textos.reintentar }}
+      </button>
+    </div>
+  </div>
+} @else if (mensaje(); as texto) {
+  <div
+    class="alerta estado"
+    [class.alerta--aviso]="estado() !== 'RECHAZADA'"
+    [class.alerta--error]="estado() === 'RECHAZADA'"
+    role="status"
   >
-    {{ textos.revisar }}
-  </button>
+    <app-icono class="alerta__icono" nombre="info" />
+    <div class="alerta__cuerpo">
+      <p>{{ texto }}</p>
+      @if (estado() === 'PENDIENTE') {
+        <p class="texto-suave">{{ textos.spam }}</p>
+      }
+    </div>
+  </div>
+
+  @if (errorReenvio(); as mensajeError) {
+    <div class="alerta alerta--error" role="alert">
+      <app-icono class="alerta__icono" nombre="alerta" />
+      <p class="alerta__cuerpo">{{ mensajeError }}</p>
+    </div>
+  }
+
+  <div class="acciones">
+    @if (estado() === 'PENDIENTE') {
+      <button
+        app-boton
+        type="button"
+        variante="acento"
+        [cargando]="revisando()"
+        [disabled]="revisando()"
+        (click)="revisar()"
+      >
+        {{ textos.revisar }}
+      </button>
+    }
+    @if (puedeReenviarMismo()) {
+      <button
+        app-boton
+        type="button"
+        variante="secundario"
+        [cargando]="reenviando() && !mostrarOtroCorreo()"
+        [disabled]="espera() > 0 || reenviando()"
+        [attr.aria-describedby]="espera() > 0 ? 'pendiente-espera' : null"
+        (click)="reenviar()"
+      >
+        {{ textos.reenviar }}
+      </button>
+    }
+    @if (estado() !== 'SIN_SOLICITUD') {
+      <button
+        app-boton
+        type="button"
+        variante="texto"
+        aria-controls="pendiente-otro-correo"
+        [attr.aria-expanded]="mostrarOtroCorreo()"
+        (click)="alternarOtroCorreo()"
+      >
+        {{ mostrarOtroCorreo() ? textos.cancelarOtro : textos.otroCorreo }}
+      </button>
+    }
+  </div>
+  @if (espera() > 0) {
+    <p id="pendiente-espera" class="cuenta">{{ textoEspera() }}</p>
+  }
+
+  <div id="pendiente-otro-correo">
+    @if (mostrarOtroCorreo()) {
+      <form class="otro-correo" [formGroup]="form" (ngSubmit)="enviarOtroCorreo()" novalidate>
+        <app-campo-formulario
+          [etiqueta]="textos.correoNuevo"
+          idCampo="pendiente-correo"
+          [ayuda]="textos.ayudaCorreoNuevo"
+          [control]="form.controls.correo"
+        >
+          <input
+            appControlCampo
+            class="control"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            autocapitalize="off"
+            spellcheck="false"
+            formControlName="correo"
+          />
+        </app-campo-formulario>
+        <button
+          app-boton
+          type="submit"
+          variante="primario"
+          [cargando]="reenviando()"
+          [disabled]="espera() > 0 || reenviando()"
+        >
+          {{ textos.enviarNuevo }}
+        </button>
+      </form>
+    }
+  </div>
+}
+
+<div class="acciones">
   <button
     app-boton
     type="button"

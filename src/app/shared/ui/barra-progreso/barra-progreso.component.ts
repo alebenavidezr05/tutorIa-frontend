@@ -32,16 +32,17 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
     }
 
     .barra {
-      height: 12px;
+      height: 10px;
       border: 1px solid var(--color-borde-control);
       border-radius: var(--radio-pildora);
-      background: var(--color-superficie);
+      background: var(--color-fondo-alterno);
       overflow: hidden;
     }
 
     .barra__relleno {
       height: 100%;
       width: calc(var(--progreso, 0) * 1%);
+      border-radius: inherit;
       background: var(--color-acento);
       transition: width var(--duracion-transicion) ease-out;
     }

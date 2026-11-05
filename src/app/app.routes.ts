@@ -41,14 +41,8 @@ export const routes: Routes = [
             (m) => m.PendienteAutorizacionPageComponent,
           ),
       },
-      {
-        path: 'autorizacion',
-        title: 'Autorización del adulto responsable',
-        loadComponent: () =>
-          import('./features/autorizacion/solicitar-autorizacion-page/solicitar-autorizacion-page.component').then(
-            (m) => m.SolicitarAutorizacionPageComponent,
-          ),
-      },
+      // El formulario público de dos correos ya no existe: el enlace viejo lleva a la portada.
+      { path: 'autorizacion', pathMatch: 'full', redirectTo: 'login' },
       {
         path: 'autorizacion/confirmar',
         title: 'Confirmar autorización',

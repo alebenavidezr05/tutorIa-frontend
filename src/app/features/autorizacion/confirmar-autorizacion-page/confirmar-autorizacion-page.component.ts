@@ -1,4 +1,4 @@
-import { DatePipe, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,88 +7,70 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AutorizacionApiService } from '../../../core/api/autorizacion-api.service';
-import { AutorizacionPublica, comoApiError, tieneCodigo } from '../../../core/models';
-import { NotificacionService } from '../../../core/notificaciones/notificacion.service';
+import { ApiError, AutorizacionPublica, comoApiError, tieneCodigo } from '../../../core/models';
 import { BotonComponent } from '../../../shared/ui/boton/boton.component';
 import { DialogoConfirmacionComponent } from '../../../shared/ui/dialogo-confirmacion/dialogo-confirmacion.component';
 import { IconoComponent } from '../../../shared/ui/icono/icono.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
-import { TarjetaComponent } from '../../../shared/ui/tarjeta/tarjeta.component';
+import { TEXTO_ENLACE_EXTERNO } from '../../../shared/ui/textos-ui';
 import { conIndicador } from '../../../shared/utils/con-indicador';
 import { TEXTOS_CONFIRMAR } from '../autorizacion.textos';
 import { leerTokenDeFragmento } from '../leer-token';
 
 export type VistaConfirmacion =
   | { tipo: 'cargando' }
-  | { tipo: 'sin-token' }
   | { tipo: 'invalida' }
   | { tipo: 'error' }
-  | { tipo: 'autorizacion'; datos: AutorizacionPublica };
+  | { tipo: 'pendiente' | 'autorizada' | 'rechazada' | 'retirada'; datos: AutorizacionPublica };
 
-type Dialogo = 'ninguno' | 'no-autorizo' | 'revocar';
+/** Estado del backend → pantalla. REVOCADA, EXPIRADA o sin solicitud: el enlace ya no sirve. */
+function _vistaDe(datos: AutorizacionPublica): VistaConfirmacion {
+  switch (datos.estado) {
+    case 'PENDIENTE':
+      return { tipo: 'pendiente', datos };
+    case 'AUTORIZADA':
+      return { tipo: 'autorizada', datos };
+    case 'RECHAZADA':
+      return { tipo: 'rechazada', datos };
+    default:
+      return { tipo: 'invalida' };
+  }
+}
 
 /**
- * Pantalla pública del acudiente. El token llega en el FRAGMENTO (`#token=…`), que nunca viaja al
- * servidor: se lee una vez, se guarda en una señal, se borra de la barra de direcciones y solo se
- * envía en el cuerpo de un POST. No usa SesionService ni cookies.
+ * Pantalla pública del adulto responsable: corta, con dos decisiones («Autorizo» / «No autorizo»).
+ * El token llega en el FRAGMENTO (`#token=…`), que nunca viaja al servidor: se lee una vez, se
+ * guarda en una señal, se borra de la barra de direcciones y solo se envía en el cuerpo de un POST.
+ * No usa SesionService, cookies ni almacenamiento.
  */
 @Component({
   selector: 'app-confirmar-autorizacion-page',
-  imports: [
-    DatePipe,
-    RouterLink,
-    BotonComponent,
-    DialogoConfirmacionComponent,
-    IconoComponent,
-    SpinnerComponent,
-    TarjetaComponent,
-  ],
+  imports: [BotonComponent, DialogoConfirmacionComponent, IconoComponent, SpinnerComponent],
   templateUrl: './confirmar-autorizacion-page.component.html',
-  styles: `
-    .estudiante {
-      font-family: var(--fuente-mono);
-      font-size: var(--texto-md);
-      font-weight: 700;
-      overflow-wrap: anywhere;
-    }
-
-    .explicacion {
-      padding-left: var(--espacio-5);
-    }
-
-    .casilla-dialogo {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--espacio-1);
-    }
-
-    .casilla-dialogo label {
-      padding-block: 10px;
-      font-weight: 700;
-    }
-  `,
+  styleUrl: './confirmar-autorizacion-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmarAutorizacionPageComponent implements OnInit {
   private readonly api = inject(AutorizacionApiService);
   private readonly ruta = inject(ActivatedRoute);
   private readonly location = inject(Location);
-  private readonly notificaciones = inject(NotificacionService);
 
   protected readonly textos = TEXTOS_CONFIRMAR;
+  protected readonly textoExterno = TEXTO_ENLACE_EXTERNO;
   /** El token solo vive en memoria. */
   private readonly token = signal<string | null>(null);
   protected readonly vista = signal<VistaConfirmacion>({ tipo: 'cargando' });
   protected readonly procesando = signal(false);
-  protected readonly dialogo = signal<Dialogo>('ninguno');
+  protected readonly dialogoAbierto = signal(false);
   protected readonly eliminarDatos = signal(false);
+  protected readonly avisoPolitica = signal(false);
 
-  protected readonly autorizacion = computed(() => {
+  protected readonly datos = computed(() => {
     const vista = this.vista();
-    return vista.tipo === 'autorizacion' ? vista.datos : null;
+    return 'datos' in vista ? vista.datos : null;
   });
 
   ngOnInit(): void {
@@ -99,7 +81,7 @@ export class ConfirmarAutorizacionPageComponent implements OnInit {
     if (token) {
       this.consultar();
     } else {
-      this.vista.set({ tipo: 'sin-token' });
+      this.vista.set({ tipo: 'invalida' });
     }
   }
 
@@ -114,46 +96,62 @@ export class ConfirmarAutorizacionPageComponent implements OnInit {
 
   protected autorizar(): void {
     const token = this.token();
-    if (token) {
-      this.ejecutar(this.api.confirmar(token), this.textos.exitoAutorizar);
+    const datos = this.datos();
+    if (token && datos) {
+      this.avisoPolitica.set(false);
+      this.ejecutar(this.api.confirmar(token, datos.version_politica));
     }
   }
 
-  protected abrirDialogo(dialogo: Dialogo): void {
+  protected rechazar(): void {
+    const token = this.token();
+    if (token) {
+      this.avisoPolitica.set(false);
+      this.ejecutar(this.api.rechazar(token));
+    }
+  }
+
+  protected abrirDialogo(): void {
     this.eliminarDatos.set(false);
-    this.dialogo.set(dialogo);
+    this.dialogoAbierto.set(true);
   }
 
   protected cerrarDialogo(): void {
-    this.dialogo.set('ninguno');
+    this.dialogoAbierto.set(false);
   }
 
   protected alternarEliminarDatos(evento: Event): void {
     this.eliminarDatos.set((evento.target as HTMLInputElement).checked);
   }
 
-  protected revocar(): void {
+  protected retirar(): void {
     const token = this.token();
     if (token) {
-      const eliminar = this.dialogo() === 'revocar' && this.eliminarDatos();
-      this.ejecutar(this.api.revocar(token, eliminar), this.textos.exitoRevocar);
+      this.ejecutar(this.api.revocar(token, this.eliminarDatos()), true);
     }
   }
 
-  private ejecutar(peticion: Observable<AutorizacionPublica>, exito?: string): void {
+  private ejecutar(peticion: Observable<AutorizacionPublica>, retiro = false): void {
     peticion.pipe(conIndicador(this.procesando)).subscribe({
       next: (datos) => {
-        this.dialogo.set('ninguno');
-        this.vista.set({ tipo: 'autorizacion', datos });
-        if (exito) {
-          this.notificaciones.exito(exito);
-        }
+        this.dialogoAbierto.set(false);
+        this.vista.set(retiro ? { tipo: 'retirada', datos } : _vistaDe(datos));
       },
       error: (e: unknown) => {
-        this.dialogo.set('ninguno');
-        const invalida = tieneCodigo(comoApiError(e), 'AUTORIZACION_INVALIDA');
-        this.vista.set({ tipo: invalida ? 'invalida' : 'error' });
+        this.dialogoAbierto.set(false);
+        this.manejarError(comoApiError(e));
       },
     });
+  }
+
+  private manejarError(error: ApiError): void {
+    if (tieneCodigo(error, 'POLITICA_DESACTUALIZADA')) {
+      // La política cambió: se recarga el texto nuevo antes de volver a pedir el clic.
+      this.consultar();
+      this.avisoPolitica.set(true);
+      return;
+    }
+    const invalida = tieneCodigo(error, 'AUTORIZACION_INVALIDA') || error.status === 410;
+    this.vista.set({ tipo: invalida ? 'invalida' : 'error' });
   }
 }

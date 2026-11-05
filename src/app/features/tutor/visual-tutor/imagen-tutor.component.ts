@@ -81,9 +81,9 @@ import { TEXTOS_VISUAL } from '../tutor.textos';
       gap: var(--espacio-1);
       margin-bottom: var(--espacio-2);
       padding: 0 var(--espacio-2);
-      border: 2px solid var(--color-texto);
+      border: 1.5px solid var(--color-borde-control);
       border-radius: var(--radio-pildora);
-      font-weight: 800;
+      font-weight: 700;
       font-size: var(--texto-sm);
     }
 

@@ -10,18 +10,21 @@
   --color-texto: var(--ti-marino-900);
   --color-texto-suave: var(--ti-marino-700);
   --color-borde: var(--ti-crema-200);
+  /* Bordes suaves de tarjetas y separadores: azul profundo con transparencia */
+  --color-borde-suave: rgb(13 27 42 / 10%);
   /* Bordes de controles: contraste ≥ 3:1 (WCAG 1.4.11) */
   --color-borde-control: var(--ti-marino-500);
   --color-primario: var(--ti-marino-900);
   --color-primario-hover: var(--ti-marino-700);
   --color-sobre-primario: var(--ti-crema-50);
   --color-acento: var(--ti-coral-500);
-  --color-acento-hover: var(--ti-coral-600);
-  --color-acento-suave: var(--ti-coral-100);
-  --color-sobre-acento: var(--ti-marino-900); /* nunca blanco sobre coral */
+  --color-acento-hover: var(--ti-coral-400);
+  --color-acento-suave: var(--ti-coral-100); /* fondos de selección y resaltados suaves */
+  --color-sobre-acento: var(--ti-marino-900); /* nunca blanco sobre coral (≈ 5.6:1) */
   --color-foco: var(--ti-marino-900);
   --color-panel-marca: var(--ti-marino-900);
   --color-sobre-panel-marca: var(--ti-crema-100);
+  --color-panel-suave: var(--ti-crema-200);
   --color-burbuja-usuario: var(--ti-marino-900);
   --color-sobre-burbuja-usuario: var(--ti-crema-50);
   --color-exito: var(--ti-exito);
@@ -30,9 +33,11 @@
   --color-error-fondo: var(--ti-error-fondo);
   --color-aviso: var(--ti-aviso);
   --color-aviso-fondo: var(--ti-aviso-fondo);
-  --color-velo: rgb(11 27 46 / 55%);
+  --color-velo: rgb(13 27 42 / 55%);
 
-  --sombra-suave: 0 1px 2px rgb(11 27 46 / 8%), 0 4px 12px rgb(11 27 46 / 6%);
+  /* Sombras suaves y difusas */
+  --sombra-suave: 0 1px 2px rgb(13 27 42 / 4%), 0 8px 24px rgb(13 27 42 / 6%);
+  --sombra-elevada: 0 2px 6px rgb(13 27 42 / 5%), 0 18px 40px rgb(13 27 42 / 10%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,17 +49,19 @@
     --color-texto: var(--ti-crema-100);
     --color-texto-suave: var(--ti-crema-200);
     --color-borde: var(--ti-marino-700);
+    --color-borde-suave: rgb(245 240 232 / 14%);
     --color-borde-control: var(--ti-crema-300);
     --color-primario: var(--ti-crema-100);
     --color-primario-hover: var(--ti-crema-200);
     --color-sobre-primario: var(--ti-marino-900);
     --color-acento: var(--ti-coral-500);
-    --color-acento-hover: var(--ti-coral-600);
+    --color-acento-hover: var(--ti-coral-400);
     --color-acento-suave: var(--ti-marino-700);
     --color-sobre-acento: var(--ti-marino-900);
     --color-foco: var(--ti-crema-100);
     --color-panel-marca: var(--ti-marino-800);
     --color-sobre-panel-marca: var(--ti-crema-100);
+    --color-panel-suave: var(--ti-marino-800);
     --color-burbuja-usuario: var(--ti-crema-100);
     --color-sobre-burbuja-usuario: var(--ti-marino-900);
     --color-exito: var(--ti-exito-claro);
@@ -65,6 +72,7 @@
     --color-aviso-fondo: var(--ti-aviso-fondo-oscuro);
     --color-velo: rgb(0 0 0 / 65%);
 
-    --sombra-suave: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 12px rgb(0 0 0 / 25%);
+    --sombra-suave: 0 1px 2px rgb(0 0 0 / 25%), 0 8px 24px rgb(0 0 0 / 22%);
+    --sombra-elevada: 0 2px 6px rgb(0 0 0 / 30%), 0 18px 40px rgb(0 0 0 / 35%);
   }
 }

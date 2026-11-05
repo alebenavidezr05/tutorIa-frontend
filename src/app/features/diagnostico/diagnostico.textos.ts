@@ -1,8 +1,8 @@
-import { LEMA, LEMA_SECUNDARIO } from '../../layout/textos-layout';
+import { LEMA_SECUNDARIO } from '../../layout/textos-layout';
 
 export const TEXTOS_TEMA = {
-  titulo: '¿Qué quieres aprender hoy?',
-  lema: LEMA,
+  titulo: '¿Qué te gustaría aprender hoy?',
+  saludo: (nombre: string) => (nombre ? `¡Hola, ${nombre}!` : '¡Hola!'),
   lemaSecundario: LEMA_SECUNDARIO,
   etiqueta: 'Escribe un tema de estudio',
   ayuda: 'Te haremos un diagnóstico corto (3 a 5 preguntas) para armar un plan a tu medida.',
@@ -25,14 +25,15 @@ export const TEXTOS_CUESTIONARIO = {
   siguiente: 'Siguiente',
   enviar: 'Ver mi resultado',
   eligeUna: 'Elige una respuesta para continuar.',
-  cargando: 'Cargando tu diagnóstico…',
+  animo: 'Tómate tu tiempo. Así conozco tu punto de partida.',
+  cargando: 'Estoy preparando tus preguntas…',
   enviando: 'Revisando tus respuestas…',
-  error: 'No pudimos cargar este diagnóstico.',
+  error: 'Algo no salió como esperaba. Intentémoslo de nuevo.',
   volver: 'Elegir otro tema',
 } as const;
 
 export const TEXTOS_RESULTADO = {
-  titulo: 'Tu resultado',
+  titulo: '¡Terminaste el diagnóstico!',
   aciertos: (aciertos: number, total: number) => `Acertaste ${aciertos} de ${total} preguntas.`,
   revision: 'Revisa tus respuestas',
   tuRespuesta: 'Tu respuesta',
@@ -41,7 +42,7 @@ export const TEXTOS_RESULTADO = {
   respuestaCorrecta: 'Respuesta correcta',
   fuente: 'Fuente',
   generar: 'Generar mi plan',
-  generando: 'Armando un plan a tu medida…',
+  generando: 'Estoy pensando en tu plan…',
   noEncontrado: 'No encontramos este resultado',
   noEncontradoTexto:
     'Puede que hayas recargado la página. Tus planes guardados están en el historial.',

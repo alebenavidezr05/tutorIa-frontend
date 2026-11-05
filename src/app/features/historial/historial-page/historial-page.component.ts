@@ -23,7 +23,7 @@ const TAMANO_PAGINA = 10;
 export const TEXTOS_HISTORIAL = {
   titulo: 'Historial',
   intro: 'Tus diagnósticos y planes de estudio. Abre uno para seguir donde lo dejaste.',
-  vacioTitulo: 'Aún no tienes planes',
+  vacioTitulo: 'Aún no tienes temas. ¿Empezamos con el primero?',
   vacioTexto: 'Elige un tema, responde el diagnóstico y armamos tu primer plan de estudio.',
   empezar: 'Elegir un tema',
   verPlan: 'Ver plan',
@@ -32,7 +32,7 @@ export const TEXTOS_HISTORIAL = {
   siguiente: 'Página siguiente',
   pagina: (actual: number, total: number) => `Página ${actual} de ${total}`,
   limitado: 'Mejora a Premium para ver todo tu historial',
-  error: 'No pudimos cargar tu historial.',
+  error: 'Algo no salió como esperaba. Intentémoslo de nuevo.',
   reintentar: 'Reintentar',
 } as const;
 
@@ -54,15 +54,20 @@ export const TEXTOS_HISTORIAL = {
       flex-direction: column;
       gap: var(--espacio-2);
       height: 100%;
-      padding: var(--espacio-4);
-      border: 1px solid var(--color-borde);
-      border-radius: var(--radio-lg);
+      padding: var(--espacio-5);
+      border: 1px solid var(--color-borde-suave);
+      border-radius: var(--radio-xl);
       background: var(--color-superficie);
+      box-shadow: var(--sombra-suave);
       color: var(--color-texto);
       text-decoration: none;
+      transition:
+        border-color var(--duracion-transicion),
+        box-shadow var(--duracion-transicion);
 
       &:hover {
         border-color: var(--color-acento);
+        box-shadow: var(--sombra-elevada);
       }
     }
 

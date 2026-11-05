@@ -34,10 +34,11 @@ import { TEXTO_PREMIUM } from '../textos-ui';
   styles: `
     :host {
       display: block;
-      padding: var(--espacio-4);
-      border: 2px solid var(--color-acento);
-      border-radius: var(--radio-lg);
+      padding: var(--espacio-5);
+      border: 1.5px solid var(--color-acento);
+      border-radius: var(--radio-xl);
       background: var(--color-superficie);
+      box-shadow: var(--sombra-suave);
     }
 
     .bloqueo__cabecera {

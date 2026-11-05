@@ -1,22 +1,22 @@
 // ÚNICO archivo con valores de color y medidas de marca.
-// Los hexadecimales se estimaron a partir de docs/brand/identidad-visual.png (muestreo de píxeles:
-// marino #0B1B2D, coral #FE5D3B, crema #EDE9E0). Confírmalos con los oficiales y cámbialos solo aquí.
+// Paleta oficial de la hoja de identidad de Vex: azul profundo #0D1B2A, coral #FF5C3A, crema #F5F0E8.
+// Los demás tonos se derivan de esos tres. Cámbialos solo aquí.
 // Ningún componente usa estos tokens directamente: usa los alias de _tema.scss.
 
 :root {
   /* Marca */
-  --ti-marino-900: #0b1b2e; /* primario: texto, botón principal, fondos oscuros */
-  --ti-marino-800: #13253b;
-  --ti-marino-700: #1b2e45;
-  --ti-marino-500: #4a5b70;
-  --ti-marino-100: #dce2ea;
-  --ti-coral-500: #ff5c3d; /* acento: hoja del logo, resaltados */
-  --ti-coral-600: #e04526;
-  --ti-coral-100: #ffe4dd;
-  --ti-crema-50: #f7f4ee;
-  --ti-crema-100: #f0ebe1; /* fondo base */
-  --ti-crema-200: #e4ddcf;
-  --ti-crema-300: #c9bfad;
+  --ti-marino-900: #0d1b2a; /* azul profundo: texto, botón principal, fondos oscuros */
+  --ti-marino-800: #15263a;
+  --ti-marino-700: #22344a;
+  --ti-marino-500: #56677b;
+  --ti-marino-100: #dfe4ea;
+  --ti-coral-500: #ff5c3a; /* coral: acentos, llamadas a la acción, detalles de Vex */
+  --ti-coral-400: #ff7a5e; /* hover del botón coral: más claro para mantener el contraste AA */
+  --ti-coral-100: #ffe6df;
+  --ti-crema-50: #fbf9f5; /* tarjetas y superficies elevadas */
+  --ti-crema-100: #f5f0e8; /* crema: fondo general */
+  --ti-crema-200: #ebe4d8;
+  --ti-crema-300: #cfc5b3;
 
   /* Semánticos (estados) sobre fondo claro */
   --ti-exito: #1f7a4d;
@@ -34,10 +34,11 @@
   --ti-error-fondo-oscuro: #3d1a1d;
   --ti-aviso-fondo-oscuro: #3a2e14;
 
-  /* Forma */
-  --radio-sm: 8px;
-  --radio-md: 12px;
+  /* Forma: suave y geométrica */
+  --radio-sm: 10px;
+  --radio-md: 14px;
   --radio-lg: 20px;
+  --radio-xl: 24px;
   --radio-pildora: 999px;
 
   /* Espaciado (múltiplos de 4 px) */
@@ -49,20 +50,34 @@
   --espacio-6: 32px;
   --espacio-7: 48px;
   --espacio-8: 64px;
+  /* Aire fluido entre secciones */
+  --espacio-seccion: clamp(32px, 24px + 2.5vw, 56px);
 
   /* Puntos de quiebre (documentación; las media queries usan los de SCSS de abajo) */
-  --bp-sm: 600px;
-  --bp-md: 900px;
-  --bp-lg: 1200px;
+  --bp-sm: 640px;
+  --bp-md: 1024px;
+  --bp-lg: 1280px;
+
+  /* Tamaños de Vex: escalan de 320 px a 1280 px de ancho. Ninguna pantalla define otros. */
+  --vex-xs: clamp(32px, 29.33px + 0.833vw, 40px);
+  --vex-sm: clamp(56px, 50.67px + 1.667vw, 72px);
+  --vex-md: clamp(96px, 85.33px + 3.333vw, 128px);
+  --vex-lg: clamp(160px, 140px + 6.25vw, 220px);
+  /* En pantallas bajas (móvil horizontal) la portada no pasa de media altura. */
+  --vex-xl: min(clamp(220px, 186.67px + 10.417vw, 320px), 45dvh);
+
+  /* Navegación: barra superior en móvil; en escritorio el shell la vuelve lateral (alto 0). */
+  --alto-barra: 64px;
+  --ancho-lateral: 248px;
 
   /* Otros */
   --objetivo-tactil: 44px;
   --ancho-lectura: 70ch;
   --ancho-contenido: 1120px;
-  --duracion-transicion: 160ms;
+  --duracion-transicion: 180ms;
 }
 
 // Las media queries no aceptan variables CSS: estos valores reflejan --bp-*.
-$bp-sm: 600px;
-$bp-md: 900px;
-$bp-lg: 1200px;
+$bp-sm: 640px;
+$bp-md: 1024px;
+$bp-lg: 1280px;

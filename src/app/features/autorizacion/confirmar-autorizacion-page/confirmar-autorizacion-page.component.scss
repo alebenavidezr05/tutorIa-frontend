@@ -1,0 +1,75 @@
+@use 'mixins' as *;
+
+.adulto__titulo {
+  margin-bottom: var(--espacio-1);
+  font-size: var(--texto-xl);
+}
+
+.adulto__correo {
+  margin-bottom: var(--espacio-4);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.adulto__resumen {
+  display: grid;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--espacio-3);
+  }
+}
+
+.adulto__icono {
+  flex: none;
+  display: inline-flex;
+  padding: var(--espacio-1);
+  border-radius: 50%;
+  background: var(--color-acento-suave);
+  color: var(--color-texto);
+}
+
+.adulto__legal {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+
+/*
+ * Dos botones del mismo tamaño y a la misma altura. En móvil quedan fijos abajo para que se vean
+ * sin desplazarse aunque el texto legal sea largo.
+ */
+.adulto__botones {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-3);
+  margin-inline: calc(-1 * var(--espacio-4));
+  padding: var(--espacio-3) var(--espacio-4) max(var(--espacio-3), env(safe-area-inset-bottom));
+  background: var(--color-fondo);
+  box-shadow: 0 -8px 16px -12px var(--color-velo);
+
+  @include desde(sm) {
+    position: static;
+    margin-inline: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.casilla-dialogo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-1);
+
+  label {
+    padding-block: 10px;
+    font-weight: 700;
+  }
+}

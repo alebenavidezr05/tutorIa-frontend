@@ -26,7 +26,7 @@ import { NIVELES } from '../textos-ui';
       align-items: center;
       gap: var(--espacio-2);
       padding: var(--espacio-1) var(--espacio-3);
-      border: 2px solid var(--color-texto);
+      border: 1.5px solid var(--color-borde-control);
       border-radius: var(--radio-pildora);
       background: var(--color-superficie);
       color: var(--color-texto);

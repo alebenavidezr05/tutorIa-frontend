@@ -36,7 +36,6 @@ export const CAMPO_POR_FINALIDAD: Readonly<Record<string, string>> = {
   TRANSFERENCIA_INTERNACIONAL: 'acepta_transferencia_internacional',
   PERSONALIZACION: 'acepta_personalizacion',
   COMUNICACIONES: 'acepta_comunicaciones',
-  COMPRAS_MENOR: 'permite_compras',
   OPINION_MENOR: 'entiende_datos_menor',
 };
 
@@ -65,6 +64,19 @@ function _normalizarDetalles(detalles: unknown): DetalleError[] | null {
   return validos.length > 0 ? validos : null;
 }
 
+/** `Retry-After` admite segundos o una fecha HTTP. */
+function _segundosRetryAfter(valor: string | null, ahora = Date.now()): number | null {
+  if (!valor) {
+    return null;
+  }
+  const segundos = Number(valor.trim());
+  if (Number.isFinite(segundos)) {
+    return Math.max(0, Math.ceil(segundos));
+  }
+  const fecha = Date.parse(valor);
+  return Number.isNaN(fecha) ? null : Math.max(0, Math.ceil((fecha - ahora) / 1000));
+}
+
 /** Convierte cualquier error de HttpClient en un `ApiError` tipado. */
 export function mapearError(error: unknown): ApiError {
   if (!(error instanceof HttpErrorResponse)) {
@@ -78,12 +90,15 @@ export function mapearError(error: unknown): ApiError {
   if (error.status === 0) {
     return { status: 0, codigo: 'SIN_CONEXION', mensaje: MENSAJE_SIN_CONEXION, detalles: null };
   }
+  const reintentar = _segundosRetryAfter(error.headers?.get('Retry-After') ?? null);
+  const extra = reintentar === null ? {} : { reintentarEnSegundos: reintentar };
   if (_esCuerpoErrorApi(error.error)) {
     return {
       status: error.status,
       codigo: error.error.error.codigo,
       mensaje: error.error.error.mensaje,
       detalles: _normalizarDetalles(error.error.error.detalles),
+      ...extra,
     };
   }
   return {

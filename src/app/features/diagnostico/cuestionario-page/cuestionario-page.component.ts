@@ -18,6 +18,7 @@ import { BarraProgresoComponent } from '../../../shared/ui/barra-progreso/barra-
 import { BotonComponent } from '../../../shared/ui/boton/boton.component';
 import { EstadoVacioComponent } from '../../../shared/ui/estado-vacio/estado-vacio.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
+import { VexComponent } from '../../../shared/ui/vex/vex.component';
 import { conIndicador } from '../../../shared/utils/con-indicador';
 import { TEXTOS_CUESTIONARIO } from '../diagnostico.textos';
 import { FlujoDiagnosticoService } from '../flujo-diagnostico.service';
@@ -32,6 +33,7 @@ const LETRAS: readonly OpcionLetra[] = ['a', 'b', 'c', 'd'];
     BotonComponent,
     EstadoVacioComponent,
     SpinnerComponent,
+    VexComponent,
   ],
   templateUrl: './cuestionario-page.component.html',
   styleUrl: './cuestionario-page.component.scss',

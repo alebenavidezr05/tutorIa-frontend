@@ -19,7 +19,7 @@ export const MENSAJES_VALIDACION: Record<string, Constructor> = {
   requiredTrue: () => 'Debes marcar esta casilla para continuar.',
   email: () => 'Escribe un correo válido, por ejemplo nombre@correo.com.',
   correo: () => 'Escribe un correo válido, por ejemplo nombre@correo.com.',
-  correosIguales: () => 'El correo del estudiante debe ser distinto al del adulto responsable.',
+  correosIguales: () => 'El correo del adulto responsable debe ser distinto al tuyo.',
   minlength: (v) => `Escribe al menos ${_limites(v).min} caracteres.`,
   maxlength: (v) => `Escribe máximo ${_limites(v).max} caracteres.`,
   longitudTexto: (v) => `Escribe entre ${_limites(v).min} y ${_limites(v).max} caracteres.`,
@@ -28,7 +28,7 @@ export const MENSAJES_VALIDACION: Record<string, Constructor> = {
   temaLongitud: (v) =>
     `El tema debe tener entre ${_limites(v).min} y ${_limites(v).max} caracteres.`,
   resolverTarea: () =>
-    'TutorIA te enseña, no te hace la tarea. Escribe el tema que quieres aprender, por ejemplo "fracciones equivalentes".',
+    'Aquí aprendemos paso a paso. Escribe el tema que quieres aprender, por ejemplo "fracciones equivalentes".',
   contrasenaLongitud: (v) =>
     `La contraseña debe tener entre ${_limites(v).min} y ${_limites(v).max} caracteres.`,
   contrasenaBytes: () => 'La contraseña es demasiado larga.',

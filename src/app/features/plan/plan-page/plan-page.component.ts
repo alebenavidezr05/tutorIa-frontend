@@ -31,6 +31,7 @@ import { InsigniaNivelComponent } from '../../../shared/ui/insignia-nivel/insign
 import { ListaReferenciasComponent } from '../../../shared/ui/lista-referencias/lista-referencias.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 import { TarjetaComponent } from '../../../shared/ui/tarjeta/tarjeta.component';
+import { VexComponent } from '../../../shared/ui/vex/vex.component';
 import { AvisoPagina, avisoDeError } from '../../../shared/utils/aviso-error';
 import { conIndicador } from '../../../shared/utils/con-indicador';
 import { fuenteAReferencia } from '../../../shared/utils/referencias';
@@ -54,6 +55,7 @@ import { TEXTOS_PLAN } from '../plan.textos';
     ListaReferenciasComponent,
     SpinnerComponent,
     TarjetaComponent,
+    VexComponent,
   ],
   templateUrl: './plan-page.component.html',
   styleUrl: './plan-page.component.scss',

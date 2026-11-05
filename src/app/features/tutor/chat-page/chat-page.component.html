@@ -1,5 +1,5 @@
 @if (store.cargando()) {
-  <app-spinner [etiqueta]="textos.cargando" />
+  <app-spinner [etiqueta]="textos.cargando" [conVex]="true" />
 } @else if (store.errorCarga()) {
   <app-estado-vacio [titulo]="textos.errorCarga">
     <button app-boton type="button" variante="primario" (click)="store.cargar(idConversacion())">
@@ -51,6 +51,7 @@
       }
       @if (store.enviando()) {
         <li class="chat__pensando" aria-hidden="true">
+          <app-vex estado="pensando" tamano="sm" [decorativo]="true" />
           <span class="chat__puntos"><span></span><span></span><span></span></span>
           {{ textos.pensando }}
           @if (store.demorado()) {

@@ -4,7 +4,7 @@
 </header>
 
 @if (cargando()) {
-  <app-spinner etiqueta="Cargando tu historial…" />
+  <app-spinner etiqueta="Cargando tu historial…" [conVex]="true" />
 } @else if (error()) {
   <app-estado-vacio [titulo]="textos.error">
     <button app-boton type="button" variante="primario" (click)="cargar()">

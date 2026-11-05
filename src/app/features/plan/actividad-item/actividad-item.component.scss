@@ -1,16 +1,16 @@
 .actividad {
-  padding: var(--espacio-4);
-  border: 1px solid var(--color-borde);
-  border-left: 6px solid var(--color-borde-control);
+  padding: var(--espacio-4) var(--espacio-4) var(--espacio-4) var(--espacio-5);
+  border: 1px solid var(--color-borde-suave);
   border-radius: var(--radio-lg);
-  background: var(--color-superficie);
+  background: var(--color-fondo);
+  box-shadow: inset 4px 0 0 var(--color-borde-control);
 
   &--completada {
-    border-left-color: var(--color-exito);
+    box-shadow: inset 4px 0 0 var(--color-exito);
   }
 
   &--omitida {
-    border-left-style: dashed;
+    border-style: dashed;
   }
 }
 

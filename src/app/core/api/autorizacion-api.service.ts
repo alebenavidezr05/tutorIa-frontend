@@ -2,19 +2,31 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { contextoPublico, contextoSilencioso } from '../http/contextos';
-import { AutorizacionPublica, MensajeGenerico, SolicitudAutorizacionEntrada } from '../models';
+import { AutorizacionPublica, MiAutorizacion, ReenviarAutorizacionEntrada } from '../models';
 
 /**
- * Pantallas públicas del acudiente: sin sesión y sin cookies. El token llega en el fragmento de
- * la URL y solo viaja en el cuerpo de un POST (nunca en la URL ni en registros del servidor).
+ * Autorización del adulto responsable.
+ * - `mia` y `reenviar` los usa el estudiante con sesión (cookie).
+ * - El resto son de la pantalla pública del adulto: sin sesión y sin cookies. El token llega en
+ *   el fragmento de la URL y solo viaja en el cuerpo de un POST (nunca en la URL ni en registros).
  */
 @Injectable({ providedIn: 'root' })
 export class AutorizacionApiService {
   private readonly http = inject(HttpClient);
 
-  solicitar(datos: SolicitudAutorizacionEntrada): Observable<MensajeGenerico> {
-    return this.http.post<MensajeGenerico>('/autorizaciones', datos, {
-      context: contextoPublico(),
+  mia(): Observable<MiAutorizacion> {
+    return this.http.get<MiAutorizacion>('/autorizaciones/mia', {
+      context: contextoSilencioso(),
+    });
+  }
+
+  /** Sin correo reenvía al mismo adulto; con correo cambia de destinatario. Responde 202. */
+  reenviar(correoAcudiente?: string): Observable<void> {
+    const cuerpo: ReenviarAutorizacionEntrada = correoAcudiente
+      ? { correo_acudiente: correoAcudiente }
+      : {};
+    return this.http.post<void>('/autorizaciones/reenviar', cuerpo, {
+      context: contextoSilencioso(),
     });
   }
 
@@ -26,11 +38,19 @@ export class AutorizacionApiService {
     );
   }
 
-  confirmar(token: string): Observable<AutorizacionPublica> {
+  confirmar(token: string, versionPolitica: string): Observable<AutorizacionPublica> {
     return this.http.post<AutorizacionPublica>(
       '/autorizaciones/confirmar',
+      { token, version_politica: versionPolitica },
+      { context: contextoPublico(contextoSilencioso()) },
+    );
+  }
+
+  rechazar(token: string): Observable<AutorizacionPublica> {
+    return this.http.post<AutorizacionPublica>(
+      '/autorizaciones/rechazar',
       { token },
-      { context: contextoPublico() },
+      { context: contextoPublico(contextoSilencioso()) },
     );
   }
 

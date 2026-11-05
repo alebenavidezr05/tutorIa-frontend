@@ -4,8 +4,13 @@
   </header>
 
   <app-tarjeta [elevada]="true" class="resumen">
-    <app-insignia-nivel [nivel]="r.nivel_estimado" [conDescripcion]="true" />
-    <p class="resumen__aciertos">{{ textoAciertos() }}</p>
+    <div class="resumen__cabecera">
+      <app-vex [estado]="generando() ? 'pensando' : 'celebrando'" tamano="md" />
+      <div class="resumen__datos">
+        <app-insignia-nivel [nivel]="r.nivel_estimado" [conDescripcion]="true" />
+        <p class="resumen__aciertos">{{ textoAciertos() }}</p>
+      </div>
+    </div>
 
     @if (aviso(); as a) {
       <app-aviso-error [aviso]="a" (reintentar)="generarPlan()" />

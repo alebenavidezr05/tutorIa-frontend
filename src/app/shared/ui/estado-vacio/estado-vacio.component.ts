@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { EstadoVex, VexComponent } from '../vex/vex.component';
 
+/** Patrón único para estados vacíos y errores suaves: Vex + mensaje corto + acción. */
 @Component({
   selector: 'app-estado-vacio',
+  imports: [VexComponent],
   template: `
-    <span class="estado-vacio__adorno" aria-hidden="true"></span>
+    <app-vex class="estado-vacio__vex" [estado]="vex()" tamano="md" />
     <h2 class="estado-vacio__titulo">{{ titulo() }}</h2>
     @if (texto(); as descripcion) {
       <p class="estado-vacio__texto">{{ descripcion }}</p>
@@ -16,18 +19,15 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding: var(--espacio-7) var(--espacio-4);
-      border: 2px dashed var(--color-borde-control);
-      border-radius: var(--radio-lg);
+      padding: var(--espacio-6) var(--espacio-4);
+      border: 1px solid var(--color-borde-suave);
+      border-radius: var(--radio-xl);
+      background: var(--color-superficie);
+      box-shadow: var(--sombra-suave);
     }
 
-    .estado-vacio__adorno {
-      width: 18px;
-      height: 32px;
+    .estado-vacio__vex {
       margin-bottom: var(--espacio-3);
-      border-radius: 100% 0;
-      background: var(--color-acento);
-      transform: rotate(20deg);
     }
 
     .estado-vacio__titulo {
@@ -48,4 +48,5 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class EstadoVacioComponent {
   readonly titulo = input.required<string>();
   readonly texto = input<string | null>(null);
+  readonly vex = input<EstadoVex>('acompanando');
 }
